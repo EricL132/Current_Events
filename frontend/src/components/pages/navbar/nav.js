@@ -21,7 +21,7 @@ class nav extends React.Component {
         this.handleLogout = this.handleLogout.bind(this)
         this.handleShowForgotpass = this.handleShowForgotpass.bind(this)
         this.handleForgotPass = this.handleForgotPass.bind(this)
-        this.state = {admin:false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false }
+        this.state = { admin: false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false }
         this.checkForLogin()
     }
 
@@ -80,7 +80,7 @@ class nav extends React.Component {
         if (e.target === ele) {
             this.setState({ showLogin: false })
             this.setState({ signUp: false })
-            this.setState({ forgotpassword:false})
+            this.setState({ forgotpassword: false })
             this.setState({ errorMessage: "" })
         }
     }
@@ -91,7 +91,7 @@ class nav extends React.Component {
         } else {
             this.setState({ showLogin: false })
             this.setState({ signUp: false })
-            this.setState({ forgotpassword:false})
+            this.setState({ forgotpassword: false })
         }
     }
 
@@ -125,14 +125,14 @@ class nav extends React.Component {
             const statusMessage = await res.json()
             this.setState({ errorMessage: statusMessage.status })
             loadingContainer.innerHTML = "Sign Up"
-        }else{
-            this.state.loggedInName=first
+        } else {
+            this.state.loggedInName = first.charAt(0).toUpperCase() + first.slice(1)
             this.state.email = email
             this.state.showLogin = false
             this.state.forgotpassword = false
             this.state.signUp = false
             this.state.showmenu = false
-            this.setState({loggedIn:true})
+            this.setState({ loggedIn: true })
         }
     }
 
@@ -166,32 +166,40 @@ class nav extends React.Component {
     async handleDarkMode() {
         if (this.state.darkmode) {
             const navbar = document.getElementById('nav-container')
-           
+
             const loginB = navbar.children[0].children[0]
             const moonicon = navbar.children[0].children[1]
-            navbar.style.border= '1px solid black'
+            navbar.style.border = '1px solid black'
             navbar.style.color = 'var(--text-color-black)'
             document.documentElement.style.setProperty('--background-color', '#f7f7f8');
             document.documentElement.style.setProperty('--lighter-background', '#fff');
             document.documentElement.style.setProperty('--text-color-white', 'black');
             document.documentElement.style.setProperty('--text-color', 'black');
             document.documentElement.style.setProperty('--input-color', '#fff');
-            loginB.style.border = '1px solid black'
-            moonicon.style.border = '1px solid black'
+            if (loginB) {
+                loginB.style.border = '1px solid black'
+            }
+            if (moonicon) {
+                moonicon.style.border = '1px solid black'
+            }
             this.state.darkmode = false
         } else {
             const navbar = document.getElementById('nav-container')
             const loginB = navbar.children[0].children[0]
             const moonicon = navbar.children[0].children[1]
-            navbar.style.border= ''
+            navbar.style.border = ''
             navbar.style.color = 'var(--text-color-white)'
             document.documentElement.style.setProperty('--background-color', '#0E0E0E');
             document.documentElement.style.setProperty('--lighter-background', '#18181b');
             document.documentElement.style.setProperty('--text-color-white', '#fff');
             document.documentElement.style.setProperty('--text-color', '#9BAEC8');
             document.documentElement.style.setProperty('--input-color', '#131419');
-            loginB.style.border = ''
-            moonicon.style.border = ''
+            if (loginB) {
+                loginB.style.border = ''
+            }
+            if (moonicon) {
+                moonicon.style.border = ''
+            }
             this.state.darkmode = true
 
         }
@@ -222,17 +230,17 @@ class nav extends React.Component {
 
     }
 
-    handleShowForgotpass(){
+    handleShowForgotpass() {
         this.state.errorMessage = ""
-        if(!this.state.forgotpassword){
-            this.setState({forgotpassword:true})
-        }else{
-            this.setState({forgotpassword:false})
+        if (!this.state.forgotpassword) {
+            this.setState({ forgotpassword: true })
+        } else {
+            this.setState({ forgotpassword: false })
         }
     }
 
     async handleLogout() {
-        const res = await fetch('/user/account/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' },body: JSON.stringify({}) })
+        const res = await fetch('/user/account/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
         if (res.status === 200) {
             this.setState({ loggedIn: false })
             const loginButton = document.getElementById('open-login-button')
@@ -246,18 +254,19 @@ class nav extends React.Component {
         }
     }
 
-    async handleForgotPass(e){
+    async handleForgotPass(e) {
         e.preventDefault()
-        
+
         const email = e.target.children[0].value
-        const res = await fetch('/user/account/resetpass',{method:'POST', headers: { 'Content-Type': 'application/json' },body:JSON.stringify({email:email})})
+        const res = await fetch('/user/account/resetpass', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
     }
 
     render() {
         return (
             <>
-            
+
                 <div id="nav-container">
+                    <input placeholder="Search" spellCheck="false" className="search-input"></input>
                     {this.state.weather ?
                         <div id="weather-container">
                             <span>{this.state.weather}<sup>o</sup><br></br>New York</span>
@@ -265,6 +274,7 @@ class nav extends React.Component {
                         : null}
                     {!this.state.loggedIn ?
                         <div className="nav-dropdown-container">
+
                             <button onClick={this.handleShowLogin} id="open-login-button"></button>
                             <button onClick={this.handleDarkMode} className="moon-icon-login"><i className="far fa-moon"></i></button>
                         </div>
@@ -279,16 +289,15 @@ class nav extends React.Component {
                                         <li >
                                             <button className="dropdown-button" onClick={this.handleDarkMode}><i className="far fa-moon"> Dark Mode</i></button>
                                         </li>
-                                        {this.state.admin?
-                                        <li>
-                                        <button>Create Post </button>
-                                    </li>
-                                        :null}
-                                        
+                                        {this.state.admin ?
+                                            <li>
+                                                <button>Create Post </button>
+                                            </li>
+                                            : null}
+
                                         <li>
                                             <button>Account</button>
                                         </li>
-
                                         <li>
                                             <button className="dropdown-button" onClick={this.handleLogout} >Logout</button>
                                         </li>
@@ -301,7 +310,7 @@ class nav extends React.Component {
 
 
                 </div>
-           
+
                 {this.state.showLogin && !this.state.signUp && !this.state.loggedIn && !this.state.forgotpassword ?
                     <div onClick={this.handleOutsideClick} id="lighter-outside">
                         <div className="login-container">
@@ -351,12 +360,12 @@ class nav extends React.Component {
                                     <div className="login-container">
                                         <button onClick={this.handleShowLogin} id="close-login-button"><i className="fas fa-times"></i></button>
                                         <form className="login-form" autoComplete="off" spellCheck="false" onSubmit={this.handleForgotPass}>
-                                            <input spellCheck="false" id="email" className="login-input" placeholder="Email" style={{marginTop:'7.6rem'}}></input>
-                                            <div className="error-container-login" style={{marginTop:'4rem'}}>{this.state.errorMessage}</div>
-                                            <button className="login-button" style={{marginTop:'3.7rem'}}><span className="loading-span" >Send email</span></button>
+                                            <input spellCheck="false" id="email" className="login-input" placeholder="Email" style={{ marginTop: '7.6rem' }}></input>
+                                            <div className="error-container-login" style={{ marginTop: '4rem' }}>{this.state.errorMessage}</div>
+                                            <button className="login-button" style={{ marginTop: '3.7rem' }}><span className="loading-span" >Send email</span></button>
                                             <span className="bottom-text" onClick={this.handleShowForgotpass}>Login</span>
                                         </form>
-                                       
+
                                     </div>
                                 </div>
                                     : null}
