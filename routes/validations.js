@@ -22,8 +22,9 @@ const registerValidation =  (data) =>{
             'string.empty': `Email can not be empty`,
             'string.min': `Email must be at least 6 characters`,
             'any.required': `Email is required`,
+            'string.email': `Invalid email`,
             'any.empty': `Invalid email`
-        }),
+        }).label("Email"),
         password: Joi.string().min(6).regex(/.*[0-9].*$/).required().messages({
             'string.base': `Password should be a string`,
             'string.empty': `Password can not be empty`,
@@ -46,7 +47,7 @@ const loginValidation = (data)=> {
             'string.empty': `Invalid password`,
             'any.empty': `Invalid password`
         }),
-        remember: Joi.boolean()
+        registering: Joi.boolean()
     })
 
     return schema.validate(data)

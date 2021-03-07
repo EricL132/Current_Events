@@ -9,20 +9,8 @@ class account extends React.Component{
     }
     render(){
         return(
-            <div id="account-container">
-                dsadsaczx
-                c
-                xz
-                cxz
-                cxzc
-                z
-                cxzcczx
-                c
-                zxc
-                zxcczx
-                c
-                zxcczxc
-                zx
+            <div className="page-container">
+
             </div>
         )
     }

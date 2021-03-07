@@ -1,0 +1,14 @@
+.page-container{
+    width: 65%;
+    margin: 0 auto;
+    height: -moz-calc(100vh - 72px); /* Firefox */
+    height: -webkit-calc(100vh - 72px); /* Chrome, Safari */
+    height: calc(100vh - 72px); /* IE9+ and future browsers */
+    background-position: fixed;
+    background-size: cover;
+    background-position-x: center;
+    background-position-y: center;
+    background-color: transparent;
+    margin-top: 7px;
+    overflow: hidden;
+}

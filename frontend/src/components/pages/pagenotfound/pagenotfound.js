@@ -1,16 +1,17 @@
 import React from 'react'
-import './resetpass.css'
+import './pagenotfound.css'
 
 
 class resetpass extends React.Component{
-  
     componentDidMount(){
-        console.log('vcxcxvcxcx')
     }
     render(){
         return(
             <div className="page-container">
-
+                
+               <div className="middle-container">
+                    page not found
+               </div>
             </div>
         )
     }

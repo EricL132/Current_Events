@@ -36,6 +36,9 @@
     background-color: transparent;
     height: 100vh;
     margin-top: -75px;
+    position: fixed;
+    width: 100%;
+    z-index: 1;
 }
 
 #close-login-button {
@@ -62,6 +65,7 @@
     border-radius: 5px;
     user-select: none;
     box-shadow: 1px 1px 0 0;
+
 }
 
 #close-login-button:hover {
@@ -145,6 +149,7 @@
     display: flex;
     font-weight: bold;
     flex-direction: column;
+    
 }
 
 .bottom-text {
@@ -266,6 +271,19 @@
     cursor: pointer;
 }
 
+.moon-icon-login{
+    height: 36px;
+    width: 40px;    
+    margin-left: 3.5px;
+
+    position: absolute;
+    border-radius: 5px;
+    outline: none;
+    background-color: var(--background-color);
+    color: var(--text-color-white);
+    border: none;
+    cursor: pointer;
+}
 
 #nav-container {
     background-color: var(--lighter-background);
@@ -278,7 +296,6 @@
     box-shadow: 0 0 1px 2px var(--lighter-background);
     color: var(--text-color-white);
 }
-
 
 
 #dropdown-menu{

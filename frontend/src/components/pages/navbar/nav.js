@@ -21,7 +21,7 @@ class nav extends React.Component {
         this.handleLogout = this.handleLogout.bind(this)
         this.handleShowForgotpass = this.handleShowForgotpass.bind(this)
         this.handleForgotPass = this.handleForgotPass.bind(this)
-        this.state = { weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false }
+        this.state = {admin:false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false }
         this.checkForLogin()
     }
 
@@ -42,6 +42,7 @@ class nav extends React.Component {
             const tokenInfo = await this.jwtDecode()
             this.state.email = tokenInfo.email
             this.state.loggedInName = tokenInfo.name
+            this.state.admin = tokenInfo.admin
             this.setState({ loggedIn: true })
 
         } else {
@@ -125,7 +126,13 @@ class nav extends React.Component {
             this.setState({ errorMessage: statusMessage.status })
             loadingContainer.innerHTML = "Sign Up"
         }else{
-            this.handleLogin();
+            this.state.loggedInName=first
+            this.state.email = email
+            this.state.showLogin = false
+            this.state.forgotpassword = false
+            this.state.signUp = false
+            this.state.showmenu = false
+            this.setState({loggedIn:true})
         }
     }
 
@@ -151,7 +158,7 @@ class nav extends React.Component {
                 this.setState({ loggedIn: true })
 
             }
-        }, 500)
+        }, 100)
 
 
     }
@@ -159,20 +166,34 @@ class nav extends React.Component {
     async handleDarkMode() {
         if (this.state.darkmode) {
             const navbar = document.getElementById('nav-container')
-            navbar.style.boxShadow = '0 0 2px 3px userf7f7f8'
+           
+            const loginB = navbar.children[0].children[0]
+            const moonicon = navbar.children[0].children[1]
+            navbar.style.border= '1px solid black'
             navbar.style.color = 'var(--text-color-black)'
-            document.documentElement.style.setProperty('--background-color', 'userf7f7f8');
-            document.documentElement.style.setProperty('--lighter-background', 'userfff');
+            document.documentElement.style.setProperty('--background-color', '#f7f7f8');
+            document.documentElement.style.setProperty('--lighter-background', '#fff');
             document.documentElement.style.setProperty('--text-color-white', 'black');
+            document.documentElement.style.setProperty('--text-color', 'black');
+            document.documentElement.style.setProperty('--input-color', '#fff');
+            loginB.style.border = '1px solid black'
+            moonicon.style.border = '1px solid black'
             this.state.darkmode = false
         } else {
             const navbar = document.getElementById('nav-container')
-            navbar.style.boxShadow = ''
+            const loginB = navbar.children[0].children[0]
+            const moonicon = navbar.children[0].children[1]
+            navbar.style.border= ''
             navbar.style.color = 'var(--text-color-white)'
-            document.documentElement.style.setProperty('--background-color', 'user0E0E0E');
-            document.documentElement.style.setProperty('--lighter-background', 'user18181b');
-            document.documentElement.style.setProperty('--text-color-white', 'userfff');
+            document.documentElement.style.setProperty('--background-color', '#0E0E0E');
+            document.documentElement.style.setProperty('--lighter-background', '#18181b');
+            document.documentElement.style.setProperty('--text-color-white', '#fff');
+            document.documentElement.style.setProperty('--text-color', '#9BAEC8');
+            document.documentElement.style.setProperty('--input-color', '#131419');
+            loginB.style.border = ''
+            moonicon.style.border = ''
             this.state.darkmode = true
+
         }
         this.setState({ showmenu: false })
     }
@@ -202,6 +223,7 @@ class nav extends React.Component {
     }
 
     handleShowForgotpass(){
+        this.state.errorMessage = ""
         if(!this.state.forgotpassword){
             this.setState({forgotpassword:true})
         }else{
@@ -226,6 +248,7 @@ class nav extends React.Component {
 
     async handleForgotPass(e){
         e.preventDefault()
+        
         const email = e.target.children[0].value
         const res = await fetch('/user/account/resetpass',{method:'POST', headers: { 'Content-Type': 'application/json' },body:JSON.stringify({email:email})})
     }
@@ -233,7 +256,7 @@ class nav extends React.Component {
     render() {
         return (
             <>
-
+            
                 <div id="nav-container">
                     {this.state.weather ?
                         <div id="weather-container">
@@ -243,6 +266,7 @@ class nav extends React.Component {
                     {!this.state.loggedIn ?
                         <div className="nav-dropdown-container">
                             <button onClick={this.handleShowLogin} id="open-login-button"></button>
+                            <button onClick={this.handleDarkMode} className="moon-icon-login"><i className="far fa-moon"></i></button>
                         </div>
                         :
 
@@ -255,6 +279,12 @@ class nav extends React.Component {
                                         <li >
                                             <button className="dropdown-button" onClick={this.handleDarkMode}><i className="far fa-moon"> Dark Mode</i></button>
                                         </li>
+                                        {this.state.admin?
+                                        <li>
+                                        <button>Create Post </button>
+                                    </li>
+                                        :null}
+                                        
                                         <li>
                                             <button>Account</button>
                                         </li>
@@ -271,7 +301,7 @@ class nav extends React.Component {
 
 
                 </div>
-
+           
                 {this.state.showLogin && !this.state.signUp && !this.state.loggedIn && !this.state.forgotpassword ?
                     <div onClick={this.handleOutsideClick} id="lighter-outside">
                         <div className="login-container">
