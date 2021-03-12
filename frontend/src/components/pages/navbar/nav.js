@@ -39,11 +39,11 @@ class nav extends React.Component {
     async checkForLogin() {
         const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
         if (res.status === 200) {
-            this.setState({accessToken:res.headers.get('access-token')})
+            this.setState({ accessToken: res.headers.get('access-token') })
             const tokenInfo = await this.jwtDecode()
-            this.setState({email:tokenInfo.email})
-            this.setState({loggedInName:tokenInfo.name})
-            this.setState({admin:tokenInfo.admin})
+            this.setState({ email: tokenInfo.email })
+            this.setState({ loggedInName: tokenInfo.name })
+            this.setState({ admin: tokenInfo.admin })
             this.setState({ loggedIn: true })
 
         } else {
@@ -61,8 +61,8 @@ class nav extends React.Component {
         if (this.state.loggedIn) {
             const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
             if (res.status === 200) {
-                this.setState({accessToken:res.headers.get('access-token')})
-              
+                this.setState({ accessToken: res.headers.get('access-token') })
+
             } else {
                 this.props.history.push('/')
             }
@@ -233,7 +233,7 @@ class nav extends React.Component {
     }
 
     handleShowForgotpass() {
-        this.setState({errorMessage:""})
+        this.setState({ errorMessage: "" })
         if (!this.state.forgotpassword) {
             this.setState({ forgotpassword: true })
         } else {
@@ -260,11 +260,16 @@ class nav extends React.Component {
         e.preventDefault()
 
         //const email = e.target.children[0].value
-       // const res = await fetch('/user/account/resetpass', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
+        // const res = await fetch('/user/account/resetpass', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
     }
 
-    handleGoToHome(){
-        this.props.history.push('/')
+    handleGoToHome() {
+        if (window.location.pathname === "/") {
+            console.log('dsa')
+            document.getElementsByClassName('home-all-articles-container')[0].scrollIntoView({ block: 'start', behavior: 'smooth' })
+        } else {
+            this.props.history.push('/')
+        }
     }
     render() {
         return (
@@ -272,10 +277,10 @@ class nav extends React.Component {
 
                 <div id="nav-container">
                     <button onClick={this.handleGoToHome} className="home-button">Home</button>
-                    {window.location.pathname==="/"?
-                     <input autoComplete="off" placeholder="Search" spellCheck="false" className="search-input" id="search-input" onChange={this.handleSearch}></input>
-                    :null}
-                   
+                    {window.location.pathname === "/" ?
+                        <input autoComplete="off" placeholder="Search" spellCheck="false" className="search-input" id="search-input" onChange={this.handleSearch}></input>
+                        : null}
+
                     {this.state.weather ?
                         <div id="weather-container">
                             <span>{this.state.weather}<sup>o</sup><br></br>New York</span>

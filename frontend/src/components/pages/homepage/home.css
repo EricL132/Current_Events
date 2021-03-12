@@ -1,10 +1,12 @@
 
 .home-all-articles-container{
+    
     position: relative;
     margin-top: 1rem;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
+    scroll-behavior: smooth;
    
 }
 .home-articles-container{
