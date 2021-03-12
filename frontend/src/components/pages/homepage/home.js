@@ -1,5 +1,4 @@
 import React from 'react'
-import article from '../articlepages/article';
 import './home.css'
 const querystring = require('querystring');
 
@@ -24,13 +23,8 @@ class home extends React.Component {
     }
     async handleLoadArticle(e) {
         const docu = e.nativeEvent.path.filter((ele) => {
-            try {
-                if (ele.classList.contains('home-articles-container')) {
-                   return ele
-                }
-            } catch (err) {
+            try{return ele.classList.contains('home-articles-container')}catch(err){return null}
 
-            }
         })
         const param = await docu[0].getAttribute('title')
         const queryString = querystring.stringify({title:param})
@@ -42,7 +36,6 @@ class home extends React.Component {
         const articlesInfo = await res.json()
         this.setState({ articles: articlesInfo.articles })
         this.setState({ articlesFromSearch: articlesInfo.articles })
-        console.log(this.state.articlesFromSearch)
 
     }
     render() {
@@ -53,7 +46,7 @@ class home extends React.Component {
                     <div onClick={this.handleLoadArticle} className="home-all-articles-container">
                         {this.state.articles.map((article, i) => {
                             return <div key={i} title={article.title} className="home-articles-container">
-                                <img src={article.urlToImage}></img>
+                                <img src={article.urlToImage} alt=""></img>
                                 <span>{article.title}</span>
                             </div>
 

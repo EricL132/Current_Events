@@ -1,6 +1,5 @@
 import React from 'react'
 import './article.css'
-const querystring = require('querystring')
 
 class article extends React.Component {
     constructor(props) {
@@ -12,6 +11,7 @@ class article extends React.Component {
         this.getArticle()
     }
     componentDidMount() {
+       
     }
 
     async getArticle() {
@@ -22,13 +22,14 @@ class article extends React.Component {
             this.setState({ article: resInfo.article })
         }
     }
+
     render() {
         return (
             <div className="article-page-container">
                 {this.state.article ?
                     <div className="article-container">
                         <div className="video-container">
-                            <iframe allowFullScreen="true" className="iframe-youtube" width="100%" height="100%"
+                            <iframe title="video-frame"  id="video-frame" allowFullScreen={true} className="iframe-youtube" width="100%" height="100%"
                                 src="https://www.youtube.com/embed/tgbNymZ7vqY">
                                     
                             </iframe>

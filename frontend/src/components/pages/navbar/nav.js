@@ -39,11 +39,11 @@ class nav extends React.Component {
     async checkForLogin() {
         const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
         if (res.status === 200) {
-            this.state.accessToken = res.headers.get('access-token')
+            this.setState({accessToken:res.headers.get('access-token')})
             const tokenInfo = await this.jwtDecode()
-            this.state.email = tokenInfo.email
-            this.state.loggedInName = tokenInfo.name
-            this.state.admin = tokenInfo.admin
+            this.setState({email:tokenInfo.email})
+            this.setState({loggedInName:tokenInfo.name})
+            this.setState({admin:tokenInfo.admin})
             this.setState({ loggedIn: true })
 
         } else {
@@ -61,7 +61,8 @@ class nav extends React.Component {
         if (this.state.loggedIn) {
             const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
             if (res.status === 200) {
-                this.state.accessToken = res.headers.get('access-token')
+                this.setState({accessToken:res.headers.get('access-token')})
+              
             } else {
                 this.props.history.push('/')
             }
@@ -232,7 +233,7 @@ class nav extends React.Component {
     }
 
     handleShowForgotpass() {
-        this.state.errorMessage = ""
+        this.setState({errorMessage:""})
         if (!this.state.forgotpassword) {
             this.setState({ forgotpassword: true })
         } else {
@@ -258,8 +259,8 @@ class nav extends React.Component {
     async handleForgotPass(e) {
         e.preventDefault()
 
-        const email = e.target.children[0].value
-        const res = await fetch('/user/account/resetpass', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
+        //const email = e.target.children[0].value
+       // const res = await fetch('/user/account/resetpass', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
     }
 
     handleGoToHome(){
