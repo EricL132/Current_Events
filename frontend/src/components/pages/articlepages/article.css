@@ -1,0 +1,52 @@
+.article-page-container{
+    display: flex;
+    justify-content: center;
+    
+}
+
+.article-container{
+    background-color: transparent;
+    max-width: 850px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: black;
+    padding: 2rem;
+}
+
+.video-container{
+    background-color: white;
+    width: 650px;
+    height: 450px;
+    align-self: center;
+    border: none;
+    outline: none;
+}
+
+.article-info{
+    display: flex;
+    text-overflow: clip;
+    overflow-wrap: break-word;
+    margin-top: 1rem;
+    flex-direction: column;
+    color: var(--text-color);
+}
+
+.article-title{
+    text-align: center;
+}
+
+.author-name{
+    
+}
+
+.article-description{
+    display: inline-block;
+    word-break: break-word;
+}
+
+.iframe-youtube{
+    border: none;
+    outline: none;
+}

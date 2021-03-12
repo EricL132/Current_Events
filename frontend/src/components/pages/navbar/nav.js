@@ -21,6 +21,7 @@ class nav extends React.Component {
         this.handleLogout = this.handleLogout.bind(this)
         this.handleShowForgotpass = this.handleShowForgotpass.bind(this)
         this.handleForgotPass = this.handleForgotPass.bind(this)
+        this.handleGoToHome = this.handleGoToHome.bind(this)
         this.state = { admin: false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false }
         this.checkForLogin()
     }
@@ -261,12 +262,19 @@ class nav extends React.Component {
         const res = await fetch('/user/account/resetpass', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
     }
 
+    handleGoToHome(){
+        this.props.history.push('/')
+    }
     render() {
         return (
             <>
 
                 <div id="nav-container">
-                    <input placeholder="Search" spellCheck="false" className="search-input"></input>
+                    <button onClick={this.handleGoToHome} className="home-button">Home</button>
+                    {window.location.pathname==="/"?
+                     <input autoComplete="off" placeholder="Search" spellCheck="false" className="search-input" id="search-input" onChange={this.handleSearch}></input>
+                    :null}
+                   
                     {this.state.weather ?
                         <div id="weather-container">
                             <span>{this.state.weather}<sup>o</sup><br></br>New York</span>

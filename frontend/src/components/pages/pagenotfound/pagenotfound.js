@@ -4,6 +4,7 @@ import './pagenotfound.css'
 
 class resetpass extends React.Component{
     componentDidMount(){
+        console.log('Page not ofund')
     }
     render(){
         return(

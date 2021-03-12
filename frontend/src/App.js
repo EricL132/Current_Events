@@ -5,6 +5,7 @@ import Account from './components/pages/accountpage/account.js'
 import ResetPass from './components/pages/resetpasspage/resetpass.js'
 import NoPage from './components/pages/pagenotfound/pagenotfound'
 import Navbar from './components/pages/navbar/nav.js'
+import ArticlePages from './components/pages/articlepages/article.js'
 import './App.css';
 
 class App extends React.Component {
@@ -17,7 +18,9 @@ class App extends React.Component {
         <Switch>
      
           <Route path='/' exact component={Home}></Route>
-       
+          <Route path='/article'>
+            <Route path='/:title' component={ArticlePages}></Route>
+          </Route>
           <Route path='/account' exact component={Account}></Route>
           <Route path='/account/resetpass' exact>
               <Route path='/:token' component={ResetPass}></Route>
