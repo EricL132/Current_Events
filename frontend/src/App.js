@@ -6,6 +6,7 @@ import ResetPass from './components/pages/resetpasspage/resetpass.js'
 import NoPage from './components/pages/pagenotfound/pagenotfound'
 import Navbar from './components/pages/navbar/nav.js'
 import ArticlePages from './components/pages/articlepages/article.js'
+import CreatePost from './components/pages/createpostpage/createpost.js'
 import './App.css';
 
 class App extends React.Component {
@@ -25,6 +26,7 @@ class App extends React.Component {
           <Route path='/account/resetpass' exact>
               <Route path='/:token' component={ResetPass}></Route>
           </Route>
+          <Route path="/createpost" component={CreatePost}></Route>
           <Route path='*' exact component={NoPage}></Route>
         </Switch>
         

@@ -22,6 +22,7 @@ class nav extends React.Component {
         this.handleShowForgotpass = this.handleShowForgotpass.bind(this)
         this.handleForgotPass = this.handleForgotPass.bind(this)
         this.handleGoToHome = this.handleGoToHome.bind(this)
+        this.handleLoadCreate = this.handleLoadCreate.bind(this)
         this.state = { admin: false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false }
         this.checkForLogin()
     }
@@ -271,6 +272,11 @@ class nav extends React.Component {
             this.props.history.push('/')
         }
     }
+
+    handleLoadCreate(){
+        this.setState({showmenu:false})
+        this.props.history.push('/createpost')
+    }
     render() {
         return (
             <>
@@ -305,7 +311,7 @@ class nav extends React.Component {
                                         </li>
                                         {this.state.admin ?
                                             <li>
-                                                <button>Create Post </button>
+                                                <button onClick={this.handleLoadCreate}>Create Post </button>
                                             </li>
                                             : null}
 

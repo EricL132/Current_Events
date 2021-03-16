@@ -27,7 +27,7 @@ class article extends React.Component {
         return (
             <div className="article-page-container">
                 {this.state.article ?
-                    <div className="article-container">
+                    <div className="middle-container">
                         <div className="video-container">
                             <iframe title="video-frame"  id="video-frame" allowFullScreen={true} className="iframe-youtube" width="100%" height="100%"
                                 src="https://www.youtube.com/embed/tgbNymZ7vqY">

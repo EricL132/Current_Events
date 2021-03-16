@@ -18,6 +18,7 @@ class home extends React.Component {
                 const searchvalue = searchParam.value.toLowerCase()
                 return title.includes(searchvalue)
             })
+            
             this.setState({articles:result})
         })
     }
