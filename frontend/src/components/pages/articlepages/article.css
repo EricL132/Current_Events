@@ -4,27 +4,28 @@
     
 }
 
-.middle-container{
+.article-page-container .middle-container{
     background-color: transparent;
     max-width: 850px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-color: black;
+    background-color: var(--lighter-background);
     padding: 2rem;
 }
 
-.video-container{
-    background-color: white;
+.article-page-container .video-container{
+    background-color: var(--lighter-background);
     width: 650px;
     height: 450px;
     align-self: center;
     border: none;
     outline: none;
+    position: relative;
 }
 
-.article-info{
+.article-page-container .article-info{
     display: flex;
     text-overflow: clip;
     overflow-wrap: break-word;
@@ -33,20 +34,16 @@
     color: var(--text-color);
 }
 
-.article-title{
+.article-page-container .article-title{
     text-align: center;
 }
 
-.author-name{
+.article-page-container .author-name{
     
 }
 
-.article-description{
+.article-page-container .article-description{
     display: inline-block;
     word-break: break-word;
 }
 
-.iframe-youtube{
-    border: none;
-    outline: none;
-}

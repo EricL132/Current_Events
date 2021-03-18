@@ -4,7 +4,7 @@
 }
 
 .create-middle-container {
-    margin-top: 10px;
+    margin-top: 5rem;
     background-color: var(--lighter-background);
    
 }
@@ -24,7 +24,7 @@
 .post-input {
     width: 350px;
     font-size: 1.1rem;
-    padding: 1rem;
+    padding: .7rem;
     width: 90%;
     margin-top: 1rem;
     padding-left: .8rem;
@@ -38,7 +38,7 @@
 
 
 #post-info{
-    min-height: 26rem;
+    min-height: 25rem;
     padding-bottom: -1rem;
     resize: none;
    

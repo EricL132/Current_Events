@@ -84,7 +84,6 @@ router.get('/access',authenticationToken,async(req,res)=>{
 //sda
 function authenticationToken(req,res,next){
     const tokenHeader =req.headers['access-token']
-    
     if(!tokenHeader) return res.status(400).end()
     jwt.verify(tokenHeader,process.env.ACCESS_TOKEN,async (err)=>{
         if(err){

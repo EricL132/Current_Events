@@ -6,11 +6,13 @@ class home extends React.Component {
     constructor(props) {
         super(props)
 
-        this.state = { articles: [], articlesFromSearch:[] }
+        this.state = { articles: [], articlesFromSearch:[],column:0 }
         this.handleLoadArticle = this.handleLoadArticle.bind(this)
+        this.getSettings = this.getSettings.bind(this)
         this.getArticles()
     }
     componentDidMount() {
+        this.getSettings()
         const searchParam = document.getElementById('search-input')
         searchParam.addEventListener('input',()=>{
             const result =  this.state.articlesFromSearch.filter((item)=>{
@@ -22,6 +24,12 @@ class home extends React.Component {
             this.setState({articles:result})
         })
     }
+    async getSettings(){
+        const res = await fetch('/info/pagesettings')
+        const resInfo =await res.json()
+        this.setState({column:resInfo.settings.column})
+    }
+
     async handleLoadArticle(e) {
         const docu = e.nativeEvent.path.filter((ele) => {
             try{return ele.classList.contains('home-articles-container')}catch(err){return null}
@@ -44,9 +52,9 @@ class home extends React.Component {
             <div className="page-container">
 
                 {this.state.articles ?
-                    <div onClick={this.handleLoadArticle} className="home-all-articles-container">
+                    <div  className="home-all-articles-container">
                         {this.state.articles.map((article, i) => {
-                            return <div key={i} title={article.title} className="home-articles-container">
+                            return <div key={i} title={article.title} onClick={this.handleLoadArticle} className="home-articles-container" style={{width: `${1600/this.state.column}px`}}>
                                 <img src={article.urlToImage} alt=""></img>
                                 <span>{article.title}</span>
                             </div>

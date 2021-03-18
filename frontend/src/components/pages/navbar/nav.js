@@ -23,6 +23,7 @@ class nav extends React.Component {
         this.handleForgotPass = this.handleForgotPass.bind(this)
         this.handleGoToHome = this.handleGoToHome.bind(this)
         this.handleLoadCreate = this.handleLoadCreate.bind(this)
+        this.handleAccount = this.handleAccount.bind(this)
         this.state = { admin: false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false }
         this.checkForLogin()
     }
@@ -106,6 +107,11 @@ class nav extends React.Component {
             this.setState({ signUp: false })
         }
     }
+
+    handleAccount(){
+        this.setState({showmenu:false})
+        this.props.history.push('/account')
+    }
     async handleSignup() {
         const loadingContainer = document.getElementsByClassName('loading-span')[0]
         loadingContainer.innerHTML = ""
@@ -158,8 +164,9 @@ class nav extends React.Component {
                 this.state.accessToken = returnedInfo.accessToken
                 this.state.loggedInName = returnedInfo.name
                 this.state.showLogin = false
+                this.state.admin = returnedInfo.admin
+                this.state.showmenu = false
                 this.setState({ loggedIn: true })
-
             }
         }, 100)
 
@@ -316,7 +323,7 @@ class nav extends React.Component {
                                             : null}
 
                                         <li>
-                                            <button>Account</button>
+                                            <button onClick={this.handleAccount}>Account</button>
                                         </li>
                                         <li>
                                             <button className="dropdown-button" onClick={this.handleLogout} >Logout</button>

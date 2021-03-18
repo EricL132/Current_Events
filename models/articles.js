@@ -3,11 +3,34 @@ const mongoose = require('mongoose')
 const articlesSchema = new mongoose.Schema({
     title:{
         type:String,
-        required: true
+        required:true
     },
-    image:{
+    author:{
         type:String,
-        required:false
+        required:true
+    },
+    description:{
+        type:String,
+        required:true
+    },
+    vid:{
+        type:String
+    },
+    backupvid:{
+        type:String
+    },
+    url:{
+        type:String,
+    },
+    urlToImage:{
+        type:String,
+    },
+    publishedAt:{
+        type:String,
+        required:true
+    },
+    content:{
+        type:String,
     }
 })
 // newsapi ad70d5a6b15a41be91901d72899fef58 
