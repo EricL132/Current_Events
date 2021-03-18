@@ -267,15 +267,14 @@ class nav extends React.Component {
     async handleForgotPass(e) {
         e.preventDefault()
 
-        //const email = e.target.children[0].value
-        // const res = await fetch('/user/account/resetpass', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
     }
 
     handleGoToHome() {
         if (window.location.pathname === "/") {
-            console.log('dsa')
-            document.getElementsByClassName('home-all-articles-container')[0].scrollIntoView({ block: 'start', behavior: 'smooth' })
+            this.setState({showmenu:false})
+            document.getElementsByClassName('page-container')[0].scrollIntoView({ block: 'start', behavior: 'smooth' })
         } else {
+            this.setState({showmenu:false})
             this.props.history.push('/')
         }
     }
