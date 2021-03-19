@@ -1,21 +1,24 @@
 .article-page-container{
     display: flex;
     justify-content: center;
-    
-}
+ 
+}   
 
 .article-page-container .middle-container{
     background-color: transparent;
     max-width: 850px;
-    min-height: 100vh;
+    height: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
     background-color: var(--lighter-background);
     padding: 2rem;
+    margin-top: 5rem;
+
 }
 
 .article-page-container .video-container{
+    margin-top: 2rem;
     background-color: var(--lighter-background);
     width: 650px;
     height: 450px;
