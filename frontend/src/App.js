@@ -26,7 +26,7 @@ class App extends React.Component {
           <Route path='/account/resetpass' exact>
               <Route path='/:token' component={ResetPass}></Route>
           </Route>
-          <Route path="/createpost" component={CreatePost}></Route>
+          <Route path="/createpost" exact component={CreatePost}></Route>
           <Route path='*' exact component={NoPage}></Route>
         </Switch>
         

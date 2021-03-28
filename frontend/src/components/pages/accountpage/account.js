@@ -9,17 +9,30 @@ class account extends React.Component {
         this.getUserInfo = this.getUserInfo.bind(this)
         this.checkAccess = this.checkAccess.bind(this)
         this.changeColumnSize = this.changeColumnSize.bind(this)
+        this.changeBoxSize = this.changeBoxSize.bind(this)
         this.state = {
-            accessToken: "none", loggedIn: true, accountInfo: {}, showuser: false, showadmin: true
+            accessToken: "none", loggedIn: true, accountInfo: {}, showuser: true, showadmin: false, boxsize: "", columnsize:""
         }
     }
 
     async getUserInfo() {
-
         await this.checkAccess()
         const decoded = jwt_decode(this.state.accessToken);
         this.setState({ accountInfo: decoded })
-        console.log(decoded)
+        const columnSize = localStorage.getItem('columnsize')
+        const boxSize = localStorage.getItem('boxsize')
+        if (columnSize) {
+            this.setState({ columnsize: columnSize })
+        } else {
+            this.setState({ columnsize: 1500 })
+        }
+        if(boxSize){
+            this.setState({boxsize:boxSize})
+            
+        }else{
+            this.setState({boxsize:300})
+        }
+
     }
 
     async checkAccess() {
@@ -33,12 +46,22 @@ class account extends React.Component {
         }
     }
 
-    async changeColumnSize(){
-        document.getElementsByClassName('account-admin-button')[0].innerText = 'Change'
+    async changeColumnSize() {
+        document.getElementById('change-column-button').innerText = 'Change'
         const size = document.getElementById('homecolumnsinput').value
-        const res = await fetch('/info/adminchange',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({column:size})})
-        if(res.status!==200) this.props.history.push('/')
-        document.getElementsByClassName('account-admin-button')[0].innerText = 'Changed'
+        localStorage.setItem('columnsize', size)
+        document.getElementById('change-column-button').innerText = 'Changed'
+        this.setState({ columnsize: size })
+        document.getElementById('homecolumnsinput').value = ""
+    }
+
+    async changeBoxSize() {
+        document.getElementById('change-box-button').innerText = 'Change'
+        const size = document.getElementById('box-size-input').value
+        localStorage.setItem('boxsize', size)
+        document.getElementById('change-box-button').innerText = 'Changed'
+        this.setState({ boxsize: size })
+        document.getElementById('box-size-input').value = ""
     }
     componentDidMount() {
         this.getUserInfo()
@@ -50,24 +73,31 @@ class account extends React.Component {
                     <h1>{this.state.accountInfo.name}</h1>
                     <div className="different-pages">
                         <ul>
-                            <li>User Settings</li>
+                            <li className="pages-list selected-pages-list">User Settings</li>
                             {this.state.accountInfo.admin ?
-                                <li>Admin Settings</li>
+                                <li className="pages-list">Admin Settings</li>
                                 : null}
 
                         </ul>
                         <div className="change-container">
                             {this.state.showuser ?
-                                <div></div>
+                                <div className="user-config-container">
+                                    <div className="homecolumns-container">
+                                        <label for="homecolumnsinput">Column Size</label>
+                                        <input id="homecolumnsinput" type="number" placeholder={this.state.columnsize}></input>
+                                        <button id="change-column-button" onClick={this.changeColumnSize} className="account-admin-button">Change</button>
+
+                                    </div>
+                                    <div className="homecolumns-container">
+
+                                        <label for="box-size-input">Box Size</label>
+                                        <input id="box-size-input" type="number" placeholder={this.state.boxsize}></input>
+                                        <button id="change-box-button" onClick={this.changeBoxSize} className="account-admin-button">Change</button>
+                                    </div>
+                                </div>
                                 : <>{
                                     this.state.showadmin ?
-                                        <div className="admin-config-container">
-                                            <div className="homecolumns-container">
-                                            <label for="homecolumnsinput">Home Page Columns</label>
-                                            <input id="homecolumnsinput" type="number"></input>
-                                            <button onClick={this.changeColumnSize} className="account-admin-button">Change</button>
-                                            </div>
-                                        </div>
+                                        <div></div>
                                         : null
                                 }</>
                             }

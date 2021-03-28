@@ -21,6 +21,8 @@
     background-color: transparent;
     margin-top: 7px;
     overflow: auto;
+    display: flex;
+    justify-content: center;
     -webkit-transform: translate3d(0, 0, 0);
 
 }

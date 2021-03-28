@@ -23,12 +23,6 @@ app.get('/', (req, res) => {
   });
 
 
-
-
-
-
-
-
 app.use('/user/account',accountRoutes)
 app.use('/info',infoRoutes)
 

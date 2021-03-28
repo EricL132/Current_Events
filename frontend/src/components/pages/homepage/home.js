@@ -6,7 +6,7 @@ class home extends React.Component {
     constructor(props) {
         super(props)
 
-        this.state = { articles: [], articlesFromSearch:[],column:0 }
+        this.state = { articles: [], articlesFromSearch:[],columnsize:1500,boxsize:300 }
         this.handleLoadArticle = this.handleLoadArticle.bind(this)
         this.getSettings = this.getSettings.bind(this)
         this.getArticles()
@@ -25,15 +25,20 @@ class home extends React.Component {
         })
     }
     async getSettings(){
-        const res = await fetch('/info/pagesettings')
-        const resInfo =await res.json()
-        this.setState({column:resInfo.settings.column})
+        const columnsize = localStorage.getItem('columnsize')
+        const boxsize = localStorage.getItem('boxsize')
+        if(columnsize){
+            this.setState({columnsize:columnsize})
+        }
+        if(boxsize){
+            this.setState({boxsize:boxsize})
+        }
     }
 
     async handleLoadArticle(e) {
+        console.log(e.nativeEvent.path)
         const docu = e.nativeEvent.path.filter((ele) => {
             try{return ele.classList.contains('home-articles-container')}catch(err){return null}
-
         })
         const param = await docu[0].getAttribute('title')
         const queryString = querystring.stringify({title:param})
@@ -52,9 +57,9 @@ class home extends React.Component {
             <div className="page-container">
 
                 {this.state.articles ?
-                    <div  className="home-all-articles-container">
+                    <div  className="home-all-articles-container" style={{maxWidth:`${this.state.columnsize}px`}}>
                         {this.state.articles.map((article, i) => {
-                            return <div key={i} title={article.title} onClick={this.handleLoadArticle} className="home-articles-container" style={{width: `${1600/this.state.column}px`}}>
+                            return <div key={i} title={article.title} onClick={this.handleLoadArticle} className="home-articles-container" style={{maxWidth: `${this.state.boxsize}px`}}>
                                 <img src={article.urlToImage} alt=""></img>
                                 <span>{article.title}</span>
                             </div>

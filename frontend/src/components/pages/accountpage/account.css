@@ -58,7 +58,7 @@
     outline: none;
 }
 
-.admin-config-container{
+.user-config-container{
 
 }
 
@@ -72,6 +72,7 @@
     align-items: center;
     justify-content: space-evenly;
     margin-top: 1rem;
+
 }
 
 
@@ -106,4 +107,9 @@
 .homecolumns-container input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.selected-pages-list{
+    background-color: var(--lighter-background);
+
 }
