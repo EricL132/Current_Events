@@ -50,3 +50,78 @@
     word-break: break-word;
 }
 
+
+
+
+#comment-header{
+color: white;
+width: 300px;
+margin-left: 1rem;
+}
+#commentinfobarcontainer{
+    position: relative;
+}
+#commentinfobar{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    flex-direction: column;
+    bottom: 0;
+}
+#commenttext{
+    min-height: 100px;
+    outline: none;
+    width: 80%;
+    background-color: var(--lighter-background);
+    border: 1px solid var(--light-blue);
+    padding: 1rem;
+    color: var(--text-color);
+    border-radius: 5px;
+    resize: none;
+}
+
+#commentbutton{
+    min-height: 40px;
+    width: 10%;
+    margin-top: 10px;
+}
+
+#logincommentspan{
+    position: absolute;
+    user-select: none;
+    color: var(--text-color);
+    font-size: 2rem;
+}
+
+#comments-container{
+    width: 750px;
+    height: auto;
+    align-self: center;
+    background-color: var(--background-color);  
+    margin-top: 4rem;  
+    border-radius: 5px;
+    position: relative;
+}
+.comment-container{
+    padding: .5rem;
+    margin-left: 17px;
+    border-radius: 5px;
+    color: var(--text-color);
+    width: 94%;
+    border: 1px solid var(--text-color);
+    margin:20px;
+    align-self: center;
+    justify-self: center;
+
+}
+
+.comment-container h3{
+    margin-top: 0;
+
+}
+
+.comment-container span{
+    overflow-wrap: break-word;
+}

@@ -41,6 +41,7 @@ class nav extends React.Component {
     async checkForLogin() {
         const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
         if (res.status === 200) {
+            
             this.setState({ accessToken: res.headers.get('access-token') })
             const tokenInfo = await this.jwtDecode()
             this.setState({ email: tokenInfo.email })
@@ -167,6 +168,7 @@ class nav extends React.Component {
                 this.state.admin = returnedInfo.admin
                 this.state.showmenu = false
                 this.setState({ loggedIn: true })
+                window.location.reload()
             }
         }, 100)
 

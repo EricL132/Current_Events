@@ -31,6 +31,9 @@ const articlesSchema = new mongoose.Schema({
     },
     content:{
         type:String,
+    },
+    comments:{
+        type:Array
     }
 })
 // newsapi ad70d5a6b15a41be91901d72899fef58 

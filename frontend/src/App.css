@@ -26,3 +26,16 @@
     -webkit-transform: translate3d(0, 0, 0);
 
 }
+
+.default-blue-button{
+  width: 120px;
+  height: 35px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  background-color: var(--light-blue);
+  cursor: pointer;
+  color: var(--text-color-white);
+  position: relative;
+}
+
