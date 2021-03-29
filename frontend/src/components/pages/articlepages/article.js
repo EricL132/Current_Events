@@ -45,7 +45,7 @@ class article extends React.Component {
             this.setState({ article: resInfo.article }, () => {
                 this.handleError()
             })
-            
+
         }
     }
     async handleError() {
@@ -58,8 +58,19 @@ class article extends React.Component {
     }
     async addNewComment() {
         const comment = document.getElementById('commenttext').value
-        await fetch('/info/addComment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ comment: comment, article: this.state.article }) })
+        const res = await fetch('/info/addComment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ comment: comment, article: this.state.article }) })
         document.getElementById('commenttext').value = ""
+        console.log(res.status)
+        if (res.status === 200) {
+            if (this.state.article.comments) {
+                this.state.article.comments.push({ name: this.state.loggedInName, comment: comment })
+            } else {
+                this.state.article.comments = [{ name: this.state.loggedInName, comment: comment }]
+                
+            }
+            this.forceUpdate()
+        }
+
     }
     render() {
         return (
