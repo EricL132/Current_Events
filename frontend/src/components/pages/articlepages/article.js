@@ -91,10 +91,7 @@ class article extends React.Component {
                                 })
 
                                 : null}
-                            <div className="comment-container">
-                                <h3>Eric</h3>
-                                <span>vjsdovjdsofidsiofoidsfoids</span>
-                            </div>
+
 
                             {this.state.loggedIn ?
                                 <div id="commentinfobarcontainer">
