@@ -58,7 +58,7 @@ class home extends React.Component {
 
                 {this.state.articles ?
                     <div  className="home-all-articles-container" style={{maxWidth:`${this.state.columnsize}px`}}>
-                        {this.state.articles.map((article, i) => {
+                        {this.state.articles.slice(0).reverse().map((article, i) => {
                             return <div key={i} title={article.title} onClick={this.handleLoadArticle} className="home-articles-container" style={{maxWidth: `${this.state.boxsize}px`}}>
                                 <img src={article.urlToImage} alt=""></img>
                                 <span>{article.title}</span>

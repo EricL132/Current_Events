@@ -8,7 +8,7 @@ const path = require('path');
 dotenv.config()
 const accountRoutes = require('./routes/account.js')
 const infoRoutes = require('./routes/info')
-
+const newsRoutes = require('./routes/news')
 var cookieParser = require('cookie-parser')
 app.use(cookieParser())
 app.use(express.json())
@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 
 app.use('/user/account',accountRoutes)
 app.use('/info',infoRoutes)
-
+app.use('/news',newsRoutes)
 app.get('*', (request, res) => {
   res.sendFile(path.join(__dirname+'/frontend/build/index.html'));
   });
