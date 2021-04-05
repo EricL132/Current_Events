@@ -1,7 +1,7 @@
-const router = require('express').Router()
-var cron = require('node-cron');
+//const router = require('express').Router()
+//var cron = require('node-cron');
 const NewsAPI = require('newsapi');
-const articleSchema = require('../models/articles');
+const articleSchema = require('./models/articles');
 const newsapi = new NewsAPI(process.env.newsKEY2);
 
 
@@ -48,14 +48,17 @@ function getNews(keyword){
 
 }
 //'0 0 */6 * * *' 6 hours
-cron.schedule('0 0 */6 * * *',async ()=>{
+//cron.schedule('0 0 */3 * * *',async ()=>{
     
+function getnewNewsFunc(){
     for(let words of keywords){
         await getNews(words)
     }
+}
     
-})
+//})
 
+getnewNewsFunc()
 
 function checkIfNew(article){
     return new Promise(async ()=>{
@@ -66,4 +69,4 @@ function checkIfNew(article){
 }
 
 
-module.exports = router
+//module.exports = router
