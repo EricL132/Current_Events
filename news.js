@@ -2,8 +2,13 @@
 //var cron = require('node-cron');
 const NewsAPI = require('newsapi');
 const articleSchema = require('./models/articles');
+const dotenv = require('dotenv')
+dotenv.config()
 const newsapi = new NewsAPI(process.env.newsKEY2);
-
+const mongoose  = require('mongoose')
+mongoose.connect(process.env.DB_CONNECT,{useNewUrlParser:true,useUnifiedTopology:true})
+mongoose.connection.once('open', () => { console.log('MongoDB Connected'); });
+mongoose.connection.on('error', (err) => { console.log('MongoDB connection error: ', err); }); 
 
 const keywords = ["business","entertainment","general","health","science","sports","technology","bitcoin","apple","google","amazon","us"]
 
@@ -19,7 +24,6 @@ function getNews(keyword){
      
            }).then(response => {
                try{
-                   console.log(response)
              response.articles.map(async (article)=>{
                  
                  if(article.description && checkIfNew(article)){
@@ -52,7 +56,7 @@ function getNews(keyword){
     
 async function getnewNewsFunc(){
     for(let words of keywords){
-        await getNews(words)
+         await getNews(words)
     }
 }
     
