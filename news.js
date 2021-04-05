@@ -50,7 +50,7 @@ function getNews(keyword){
 //'0 0 */6 * * *' 6 hours
 //cron.schedule('0 0 */3 * * *',async ()=>{
     
-function getnewNewsFunc(){
+async function getnewNewsFunc(){
     for(let words of keywords){
         await getNews(words)
     }
