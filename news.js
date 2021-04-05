@@ -24,9 +24,10 @@ function getNews(keyword){
      
            }).then(response => {
                try{
+            
              response.articles.map(async (article)=>{
-                 
-                 if(article.description && checkIfNew(article)){
+            
+                 if(article.description && await checkIfNew(article) ){
                  const publishedA = article.publishedAt.split("T")[0]
                  const a = new articleSchema({
                      author:article.author,
@@ -51,24 +52,30 @@ function getNews(keyword){
     })
 
 }
-//'0 0 */6 * * *' 6 hours
-//cron.schedule('0 0 */3 * * *',async ()=>{
+
     
 async function getnewNewsFunc(){
-    for(let words of keywords){
+      for(let words of keywords){
          await getNews(words)
-    }
+    } 
+ 
+   /*  await articleSchema.remove({}) */
 }
     
-//})
+
 
 getnewNewsFunc()
 
 function checkIfNew(article){
-    return new Promise(async ()=>{
+    return new Promise(async (resolve)=>{
         const articleFound = await articleSchema.findOne({title:article.title})
-        if(articleFound) return false
-        return true
+        console.log(article)
+        if(articleFound) {
+            return resolve(false)
+        }else{
+            return resolve(true)
+        }
+        
     })
 }
 
