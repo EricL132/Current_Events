@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 
+
+//Article schema for news articles
 const articlesSchema = new mongoose.Schema({
     title:{
         type:String,

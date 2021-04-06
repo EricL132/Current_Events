@@ -1,5 +1,7 @@
+//Validation file checks if request body matches fields
 const Joi = require('joi')
 
+//Registers
 const registerValidation =  (data) =>{
     const schema = Joi.object({
         first: Joi.string().min(3).max(12).required().messages({
@@ -37,6 +39,7 @@ const registerValidation =  (data) =>{
     return schema.validate(data)
 }
 
+//Login
 const loginValidation = (data)=> {
     const schema =  Joi.object({
         email: Joi.string().min(6).required().email().messages({
@@ -53,7 +56,7 @@ const loginValidation = (data)=> {
     return schema.validate(data)
 }
 
-
+//Reset Passwrod
 const resetpassValidation = (data)=>{
     const schema = Joi.object({
         email: Joi.string().min(6).required().email().messages({

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 
+
+//password reset tokens schema
 const resetSchema = new mongoose.Schema({
     email:{
         type:String,

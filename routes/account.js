@@ -10,15 +10,14 @@ const crypto  = require('crypto')
 const nodemailer = require('nodemailer')
 const path = require('path');
 
-router.post('/register',async (req,res)=>{
 
+//POST route to register account
+router.post('/register',async (req,res)=>{
     const {error} = registerValidation(req.body)
     if(error) return res.status(400).send({status:error.details[0].message})
-
     const email = req.body.email.toLowerCase()
     const first = req.body.first.charAt(0).toUpperCase() + req.body.first.slice(1)
     const last = req.body.last.charAt(0).toUpperCase() + req.body.last.slice(1)
-
     const user = await User.findOne({email:email})
     if(user) return res.status(400).send({status:"Email already exists"})
     const salt = await bcrypt.genSalt(15)
@@ -31,7 +30,6 @@ router.post('/register',async (req,res)=>{
     })
     await newUser.save()
     const resLogin = await fetch(`http://${req.headers.host}/user/account/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: newUser.email, password: req.body.password,registering:true }) })
-
     const resRead = await resLogin.json()
     res.cookie("jwt", resRead.refreshToken, {
         expires: new Date(Date.now() + 86400000),
@@ -42,6 +40,7 @@ router.post('/register',async (req,res)=>{
 
 })
 
+//POST route to login
 router.post('/login', async (req,res)=>{
     const {error} = loginValidation(req.body)
     if(error) return res.status(400).send({status:error.details[0].message})
@@ -77,11 +76,12 @@ router.post('/login', async (req,res)=>{
 
 })
 
+//GET route to check for access
 router.get('/access',authenticationToken,async(req,res)=>{
     res.status(200).header('access-token',req.accessToken.accessToken).end()
 })
 
-//sda
+//Validates authentication token
 function authenticationToken(req,res,next){
     const tokenHeader =req.headers['access-token']
     if(!tokenHeader) return res.status(400).end()
@@ -102,6 +102,7 @@ function authenticationToken(req,res,next){
     })
 }
 
+//Returns new access token
 router.post('/refreshaccess',async(req,res)=>{
     const refreshToken = req.body.token
     if(!refreshToken) return res.status(400).end()
@@ -116,17 +117,14 @@ router.post('/refreshaccess',async(req,res)=>{
     })
 })
 
-
+//POST route to logout
 router.post('/logout',async (req,res)=>{
     await RefreshTokens.findOneAndRemove({ token: req.cookies.jwt }, { useFindAndModify: false })
     return res.status(200).send({status:'logged out'})
 })
 
 
-router.get('/resetpass',async (req,res)=>{
-    res.status(200).end()
-})
-
+//POST route to reset password
 router.post('/resetpass',async(req,res)=>{
     const {error} = resetpassValidation(req.body)
     if(error) return res.status(400).end()
