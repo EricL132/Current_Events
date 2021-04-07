@@ -62,26 +62,9 @@
     color: var(--text-color);
 }
 
-.login-input {
-    width: 350px;
-    font-size: 1.1rem;
-    padding: .6rem;
-    padding-left: .8rem;
-    background-color: var(--input-color);
-    color: var(--text-color-white);
-    outline: none;
-    border: none;
-    border-bottom: 1px solid var(--text-color-black);
-    border-radius: 5px;
-}
 
-.login-input::placeholder {
-    color: var(--text-color);
-}
 
-.login-input:focus {
-    box-shadow: 0px 0px 0px 1px var(--light-blue);
-}
+
 
 .login-form {
     margin-top: -2rem;

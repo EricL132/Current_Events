@@ -92,7 +92,7 @@ class home extends React.Component {
                 {this.state.articles ?
                     <div className="home-all-articles-container" style={{ maxWidth: `${this.state.columnsize}px` }}>
                         {this.state.articles.map((articleType, i) => {
-                            return <div className="topics-container">
+                            return <div key={i} className="topics-container">
                                 <h1 className="topic-title">{articleType[i].topic.substring(0,1).toUpperCase()+articleType[i].topic.substring(1,articleType[i].topic.length)}</h1>
                                 <div className="topic-articles">
                                     {articleType.map((article, i) => {
@@ -106,10 +106,10 @@ class home extends React.Component {
 
 
                                     <div className="slide-button-container-left">
-                                        <button className="slide-article-button" onClick={this.handleLeftScroll}><i class="fas fa-arrow-left"></i></button>
+                                        <button className="slide-article-button" onClick={this.handleLeftScroll}><i className="fas fa-arrow-left"></i></button>
                                     </div>
                                     <div className="slide-button-container-right">
-                                        <button className="slide-article-button" onClick={this.handleRightScroll}><i class="fas fa-arrow-right"></i></button>
+                                        <button className="slide-article-button" onClick={this.handleRightScroll}><i className="fas fa-arrow-right"></i></button>
                                     </div>
                                 </div>
 

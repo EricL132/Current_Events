@@ -344,8 +344,8 @@ class nav extends React.Component {
                         <div className="login-container">
                             <button onClick={this.handleShowLogin} id="close-login-button"><i className="fas fa-times"></i></button>
                             <form className="login-form" autoComplete="off" onSubmit={this.handleLogin}>
-                                <input spellCheck="false" id="email" className="login-input" placeholder="Email"></input>
-                                <input autoComplete="off" style={{ marginTop: "1rem" }} type="password" spellCheck="false" id="password" className="login-input" placeholder="Password"></input>
+                                <input spellCheck="false" id="email" className="default-input" placeholder="Email"></input>
+                                <input autoComplete="off" style={{ marginTop: "1rem" }} type="password" spellCheck="false" id="password" className="default-input" placeholder="Password"></input>
                                 <div id='rem-container'>
                                     <span id="forgot-pass" onClick={this.handleShowForgotpass}>Forgot password</span>
                                 </div>
@@ -370,9 +370,9 @@ class nav extends React.Component {
                                             <input spellCheck="false" id="last-name" className="name-input" placeholder="Last Name"></input>
 
                                         </div>
-                                        <input spellCheck="false" style={{ marginTop: "1rem" }} id="signup-email" className="login-input" placeholder="Email"></input>
-                                        <input autoComplete="off" style={{ marginTop: "1rem" }} type="password" spellCheck="false" id="signup-password" className="login-input" placeholder="Password"></input>
-                                        <input autoComplete="off" style={{ marginTop: "1rem" }} type="password" spellCheck="false" id="signup-confirm-password" className="login-input" placeholder="Confirm Password"></input>
+                                        <input spellCheck="false" style={{ marginTop: "1rem" }} id="signup-email" className="default-input" placeholder="Email"></input>
+                                        <input autoComplete="off" style={{ marginTop: "1rem" }} type="password" spellCheck="false" id="signup-password" className="default-input" placeholder="Password"></input>
+                                        <input autoComplete="off" style={{ marginTop: "1rem" }} type="password" spellCheck="false" id="signup-confirm-password" className="default-input" placeholder="Confirm Password"></input>
 
                                     </form>
                                     <div className="error-container">{this.state.errorMessage}</div>
@@ -388,7 +388,7 @@ class nav extends React.Component {
                                     <div className="login-container">
                                         <button onClick={this.handleShowLogin} id="close-login-button"><i className="fas fa-times"></i></button>
                                         <form className="login-form" autoComplete="off" spellCheck="false" onSubmit={this.handleForgotPass}>
-                                            <input spellCheck="false" id="email" className="login-input" placeholder="Email" style={{ marginTop: '7.6rem' }}></input>
+                                            <input spellCheck="false" id="email" className="default-input" placeholder="Email" style={{ marginTop: '7.6rem' }}></input>
                                             <div className="error-container-login" style={{ marginTop: '4rem' }}>{this.state.errorMessage}</div>
                                             <button className="login-button" style={{ marginTop: '3.7rem' }}><span className="loading-span" >Send email</span></button>
                                             <span className="bottom-text" onClick={this.handleShowForgotpass}>Login</span>
