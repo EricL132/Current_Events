@@ -7,11 +7,17 @@ const fs = require('fs');
 const ytdl = require('ytdl-core');
 const { google } = require('googleapis');
 const path = require('path');
+const keywords = ["business", "entertainment", "general", "health", "science", "sports", "technology", "bitcoin", "apple", "google", "amazon", "us"]
 
 //GET route to get all articles
 router.get('/articles', async (req, res) => {
-    const articles = await articlesSchema.find({})
-    if (articles) return res.status(200).send({ articles: articles })
+
+   let articlesList = await Promise.all(keywords.map(async(word)=>{
+
+        const articleTopic = await articlesSchema.find({topic:word})
+        return articleTopic
+    }))
+    if (articlesList) return res.status(200).send({ articles: articlesList })
 })
 
 
@@ -84,6 +90,8 @@ router.post('/createbackupvid', async (req, res) => {
         return res.status(400).send({ msg: "Video not found" })
     }
 })
+
+
 
 //GET route to get specific article from database
 router.get('/findarticle', async (req, res) => {

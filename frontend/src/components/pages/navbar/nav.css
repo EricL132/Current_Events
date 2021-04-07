@@ -297,8 +297,8 @@
 .moon-icon-login{
     height: 36px;
     width: 40px;    
-    margin-left: 3.5px;
-
+    margin-left:4.5px;
+    
     position: absolute;
     border-radius: 5px;
     outline: none;
@@ -376,7 +376,7 @@
 .nav-dropdown-container{
     position: relative;
     align-self: flex-end;
-    right: 3rem;
+    right: 4.5rem;
     height: 300px;
     width: 110px;
     border-radius: 4px;

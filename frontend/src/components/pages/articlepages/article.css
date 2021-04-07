@@ -28,6 +28,13 @@
     position: relative;
 }
 
+.article-page-container #article-image{
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    background-position: center;
+}
+
 .article-page-container .article-info{
     display: flex;
     text-overflow: clip;
