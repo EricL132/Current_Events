@@ -24,8 +24,7 @@ function getNews(keyword) {
         //Request to api for news
         await newsapi.v2.everything({
             q: keyword,
-            from: yesterday,
-            to: today,
+        
 
         }).then(response => {
             try {
@@ -44,6 +43,7 @@ function getNews(keyword) {
                             urlToImage: article.urlToImage,
                             publishedAt: publishedA,
                             content: article.content,
+                            topic: keyword,
                             vid: 'https://www.youtube.com/embed/kaGO-_GCwHk',
                             backupvid: 'https://drive.google.com/file/d/1U0N635TIBrfEihgoZMyqWn7tDgrmeQEt/preview'
 
@@ -64,9 +64,9 @@ function getNews(keyword) {
 
 //Gets news from each keyword in keywords
 async function getnewNewsFunc() {
-    for (let words of keywords) {
+   for (let words of keywords) {
         await getNews(words)
-    }
+    } 
 
 }
 

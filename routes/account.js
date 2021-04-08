@@ -112,6 +112,7 @@ router.post('/refreshaccess',async(req,res)=>{
     jwt.verify(refreshToken,process.env.REFRESH_TOKEN, async (err,user)=>{
         if(err) return res.status(400).end()
         const checkuser = await User.findOne({email:user.email})
+        if(!checkuser) return res.status(400).end()
         const accessToken = jwt.sign({email:user.email,name:user.name,admin:checkuser.admin},process.env.ACCESS_TOKEN,{expiresIn:'1m'})
         return res.status(200).send({accessToken:accessToken})
     })

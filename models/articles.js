@@ -34,6 +34,9 @@ const articlesSchema = new mongoose.Schema({
     content:{
         type:String,
     },
+    topic:{
+        type:String,
+    },
     comments:{
         type:Array
     }

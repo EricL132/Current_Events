@@ -19,6 +19,7 @@ class account extends React.Component {
         await this.checkAccess()
         const decoded = jwt_decode(this.state.accessToken);
         this.setState({ accountInfo: decoded })
+        this.setState({ userEmail:decoded.email.slice(0,1).toUpperCase()+decoded.email.slice(1,decoded.email.length)})
         const columnSize = localStorage.getItem('columnsize')
         const boxSize = localStorage.getItem('boxsize')
         if (columnSize) {
@@ -40,6 +41,7 @@ class account extends React.Component {
             const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
             if (res.status === 200) {
                 this.setState({ accessToken: res.headers.get('access-token') })
+                
             } else {
                 this.props.history.push('/')
             }
@@ -82,7 +84,18 @@ class account extends React.Component {
                         <div className="change-container">
                             {this.state.showuser ?
                                 <div className="user-config-container">
-                                    <div className="homecolumns-container">
+                                    <div className="user-info-container">
+                                        <label>Email</label>
+                                        <span style={{backgroundColor:"var(--lighter-background)"}}>{this.state.userEmail}</span>
+                                    </div>
+                                    <div className="user-info-container">
+                                        <label>Change Password</label>
+                                        <input className="default-input user-info-input" placeholder="Current Password"></input>
+                                        <input className="default-input user-info-input" placeholder="New Password"></input>
+                                        <input className="default-input user-info-input" placeholder="Confirm New Password"></input>
+                                        <button className="default-blue-button user-info-button">Change Password</button>
+                                    </div>
+                                   {/*  <div className="homecolumns-container">
                                         <label for="homecolumnsinput">Column Size</label>
                                         <input id="homecolumnsinput" type="number" placeholder={this.state.columnsize}></input>
                                         <button id="change-column-button" onClick={this.changeColumnSize} className="account-admin-button">Change</button>
@@ -93,7 +106,7 @@ class account extends React.Component {
                                         <label for="box-size-input">Box Size</label>
                                         <input id="box-size-input" type="number" placeholder={this.state.boxsize}></input>
                                         <button id="change-box-button" onClick={this.changeBoxSize} className="account-admin-button">Change</button>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 : <>{
                                     this.state.showadmin ?
