@@ -1,4 +1,5 @@
 import React from 'react'
+import article from '../articlepages/article';
 import './home.css'
 const querystring = require('querystring');
 
@@ -15,14 +16,28 @@ class home extends React.Component {
     componentDidMount() {
         this.getSettings()
         const searchParam = document.getElementById('search-input')
-        searchParam.addEventListener('input', () => {
-            const result = this.state.articlesFromSearch.filter((item) => {
-                const title = item.title.toLowerCase()
-                const searchvalue = searchParam.value.toLowerCase()
-                return title.includes(searchvalue)
-            })
+        searchParam.addEventListener('input', async () => {
+            const res = this.state.articlesFromSearch.map((article) => {
+                return article.filter((item) => {
+                    const title = item.title.toLowerCase()
+                    const searchvalue = searchParam.value.toLowerCase()
+                    if (title.includes(searchvalue)) {
+                        return item
+                    }
 
-            this.setState({ articles: result })
+                })
+                /* const result = article.filter((item) => {
+                    const title = item.title.toLowerCase()
+                    const searchvalue = searchParam.value.toLowerCase()
+                    return title.includes(searchvalue)
+                })
+
+                this.setState({ articles: [result] }) */
+                // console.log(article)
+
+            })
+            this.setState({ articles: res })
+
         })
     }
     async getSettings() {
@@ -37,7 +52,6 @@ class home extends React.Component {
     }
 
     async handleLoadArticle(e) {
-        console.log(e.nativeEvent.path)
         const docu = e.nativeEvent.path.filter((ele) => {
             try { return ele.classList.contains('home-articles-container') } catch (err) { return null }
         })
@@ -49,10 +63,9 @@ class home extends React.Component {
     async getArticles() {
         const res = await fetch('/info/articles')
         const articlesInfo = await res.json()
-        console.log(articlesInfo)
         this.setState({ articles: articlesInfo.articles })
         this.setState({ articlesFromSearch: articlesInfo.articles })
-
+        console.log(articlesInfo.articles)
     }
     handleRightScroll(e) {
         let pa;
@@ -93,7 +106,13 @@ class home extends React.Component {
                     <div className="home-all-articles-container" style={{ maxWidth: `${this.state.columnsize}px` }}>
                         {this.state.articles.map((articleType, i) => {
                             return <div key={i} className="topics-container">
-                                <h1 className="topic-title">{articleType[i].topic.substring(0,1).toUpperCase()+articleType[i].topic.substring(1,articleType[i].topic.length)}</h1>
+                                {articleType[0] ?
+                                    <h1 className="topic-title">{articleType[0].topic.substring(0, 1).toUpperCase() + articleType[0].topic.substring(1, articleType[0].topic.length)}</h1>
+
+                                    : null}
+
+
+
                                 <div className="topic-articles">
                                     {articleType.map((article, i) => {
                                         return <div key={i} title={article.title} onClick={this.handleLoadArticle} className="home-articles-container" style={{ minWidth: `${this.state.boxsize}px` }}>
@@ -114,6 +133,7 @@ class home extends React.Component {
                                 </div>
 
                             </div>
+
                         })}
                     </div>
                     : null}
