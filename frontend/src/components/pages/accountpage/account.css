@@ -1,0 +1,145 @@
+.account-page-container{
+    
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    color: var(--text-color);
+    
+}
+
+
+.account-page-container .middle-container{
+    position: relative;
+    width: 800px;
+    overflow: auto;
+    margin-top: 5rem;
+}
+
+
+.account-page-container ul{
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--light-blue);
+    width: 150px;
+    border-radius: 5px;
+    overflow: hidden;
+    outline: none;
+    display: inline-block;
+    position: absolute;
+}
+
+.account-page-container li{
+    padding: 1.5rem;
+    cursor: pointer;
+}
+
+
+.account-page-container li:hover{
+    background-color: var(--lighter-background);
+}
+
+
+.different-pages{  
+    position: relative;
+    width: 100%;
+    height: 60vh;
+}
+
+.change-container{
+    position: absolute;
+    width: 70%;
+    height: 100%;
+    left: 12rem;
+    top: 1rem;
+    border-radius: 5px;
+    border: 1px solid var(--light-blue);
+    outline: none;
+}
+
+.user-config-container{
+
+}
+
+.homecolumns-container{
+    display: flex;
+    flex-direction: column;
+    height: 130px;
+    width: 200px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-top: 1rem;
+
+}
+
+
+.homecolumns-container input{
+    font-size: 1.1rem;
+    padding: .6rem;
+    padding-left: .8rem;
+    background-color: var(--input-color);
+    color: var(--text-color-white);
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--text-color-black);
+    border-radius: 5px;
+    width: 80px;
+}
+
+
+.homecolumns-container button{
+    width: 120px;
+    height: 35px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    background-color: var(--light-blue);
+    cursor: pointer;
+    color: var(--text-color-white);
+    position: relative;
+}
+
+
+.homecolumns-container input::-webkit-outer-spin-button,
+.homecolumns-container input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.selected-pages-list{
+    background-color: var(--lighter-background);
+
+}
+
+.user-info-container label{
+    margin-left: .2rem;
+}
+
+.user-info-container span{
+    user-select: none;
+    cursor:auto;
+    padding: .2rem .4rem;
+    border-radius: 5px;
+    margin-top: 5px;
+    width: max-content;
+}
+
+.user-info-container{
+    display: flex;
+    flex-direction: column;
+    margin: 3rem;
+    
+}
+
+
+.user-info-input{
+    margin-top: 10px;
+    height: 35px;
+    max-width: 300px;
+}
+
+.user-info-button{
+    margin-top: 10px;
+}

@@ -1,0 +1,62 @@
+:root{
+    --background-color: #0E0E0E;
+    --lighter-background: #18181b;
+    --light-blue:#2b90d9;
+    --text-color:#9BAEC8;
+    --input-color:#131419;
+    --text-color-white: #fff;
+    --text-color-black: black;
+    --ligher-white: #eeeeee
+  }
+  
+  
+
+.page-container{
+    width: 100%;
+    margin: 0 auto;
+    background-position: fixed;
+    background-size: cover;
+    background-position-x: center;
+    background-position-y: center;
+    background-color: transparent;
+    margin-top: 7px;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    -webkit-transform: translate3d(0, 0, 0);
+
+}
+
+.default-blue-button{
+  width: 120px;
+  height: 35px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  background-color: var(--light-blue);
+  cursor: pointer;
+  color: var(--text-color-white);
+  position: relative;
+}
+
+
+.default-input {
+  width: 350px;
+  font-size: 1.1rem;
+  padding: .6rem;
+  padding-left: .8rem;
+  background-color: var(--input-color);
+  color: var(--text-color-white);
+  outline: none;
+  border: none;
+  border-bottom: 1px solid var(--text-color-black);
+  border-radius: 5px;
+}
+
+.default-input::placeholder {
+  color: var(--text-color);
+}
+
+.default-input:focus {
+  box-shadow: 0px 0px 0px 1px var(--light-blue);
+}
