@@ -7,18 +7,46 @@ const fs = require('fs');
 const ytdl = require('ytdl-core');
 const { google } = require('googleapis');
 const path = require('path');
-const keywords = ["business", "entertainment", "general", "health", "science", "sports", "technology", "bitcoin", "apple", "google", "amazon", "us"]
+const multer = require('multer');
+const { mapReduce } = require('../models/articles');
+const keywords = ["", "business", "entertainment", "general", "health", "science", "sports", "technology", "bitcoin", "apple", "google", "amazon", "us"]
+
+const multerstorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'upload/')
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + file.originalname)
+    }
+
+})
+
+var upload = multer({ storage: multerstorage })
 
 //GET route to get all articles
 router.get('/articles', async (req, res) => {
 
-   let articlesList = await Promise.all(keywords.map(async(word)=>{
+    /* let articlesList = await Promise.all(keywords.map(async (word) => {
 
-        const articleTopic = await articlesSchema.find({topic:word})
+        const articleTopic = await articlesSchema.find({ topic: word })
         return articleTopic
+    })) */
+    let map = new Map()
+    let articleTopic = await articlesSchema.find({})
+    await Promise.all(articleTopic.map((article) => {
+        if (map.has(article.topic)) {
+            map.set(article.topic,[...map.get(article.topic),article])
+        } else {
+            map.set(article.topic, [article])
+        }
     }))
-    if (articlesList) return res.status(200).send({ articles: articlesList })
+    const mapVals = []
+    for(const [k,v] of map){
+        mapVals.push(v)
+    }
+    if (mapVals) return res.status(200).send({ articles:   mapVals })
 })
+
 
 
 //Authentication for Google Console API
@@ -63,9 +91,10 @@ async function saveToDrive(link) {
             body: fs.createReadStream(path.join(__dirname, '../video.mp4'))
         }
     })
-    //Deletes the file from server after save to drive
     fs.unlink(path.join(__dirname, '../video.mp4'), (err) => { })
     return res.data.id
+    //Deletes the file from server after save to drive
+
 
 
 
@@ -113,8 +142,14 @@ router.post('/createarticle', async (req, res) => {
     const date = new Date()
     newInfo.publishedAt = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
     //Saves new article to database
-    const newArticle = new articlesSchema(newInfo)
-    await newArticle.save()
+    let checkArticle = await articlesSchema.findOneAndUpdate({ title: req.body.title }, newInfo, { new: true, overwrite: true })
+
+    if (!checkArticle) {
+        const newArticle = new articlesSchema(newInfo)
+        await newArticle.save()
+    }
+
+
     res.status(200).end()
 
 })
@@ -136,11 +171,11 @@ async function checkLogin(req) {
 async function deleteAll() {
     const b = await drive.files.list({})
     console.log(b)
-    /*     b.data.files.map(async (file) => {
-            await drive.files.delete({
-                fileId: file.id
-            })
-        }) */
+    b.data.files.map(async (file) => {
+        await drive.files.delete({
+            fileId: file.id
+        })
+    })
 }
 
 
@@ -157,7 +192,7 @@ router.post('/addComment', async (req, res) => {
         article.comments = [{ name: loggedin, comment: req.body.comment }]
     }
     //Saves to article
-    await article.save()    
+    await article.save()
     res.status(200).end()
 })
 
@@ -175,4 +210,39 @@ router.post('/addComment', async (req, res) => {
     res.status(200).end()
 })
  */
+
+router.post('/saveimage', upload.single("file"), async (req, res) => {
+    console.log(req.file.filename)
+    const saveDrive = await drive.files.create({
+        requestBody: {
+            parents: ["11_ChHCDC7ZNM01ZNgNQDZ5A-8qVu9iA3"],
+            name: req.file.filename
+        },
+        media: {
+            mimeType: 'image/png',
+            body: fs.createReadStream(path.join(__dirname, '../upload/' + req.file.filename))
+        }
+    })
+    fs.unlink(path.join(__dirname, '../upload/' + req.file.filename), (err) => { })
+    console.log(saveDrive.data.id)
+    res.send({ imagelink: saveDrive.data.id })
+})
+
+
+
+router.post('/editpost', async (req, res) => {
+    const adminCheck = await checkAdmin(req)
+    if (adminCheck === false) return res.status(400).send({ errorMessage: "Not Admin" })
+
+    const articleToEdit = await articlesSchema.findOne({ title: req.body.exacttitle })
+    if (!articleToEdit) return res.status(400).send({ errormessage: "Article not found" })
+    for (const [key, value] of Object.entries(req.body)) {
+        if (value != "") {
+            articleToEdit[key] = value;
+        }
+    }
+    await articleToEdit.save()
+    return res.status(200).end()
+
+})
 module.exports = router

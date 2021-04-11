@@ -1,15 +1,15 @@
 import React from 'react'
-import './createpost.css'
+import '../createpostpage/createpost.css'
 
 let continueInterval;
-class createpost extends React.Component {
+class editpost extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             accessToken: "none", loggedIn: true, pageLoaded: false, errorMessage: "", articleCreated: false
         }
         this.checkIfAdmin = this.checkIfAdmin.bind(this)
-        this.handleCreatePost = this.handleCreatePost.bind(this)
+        this.handleEditPost = this.handleEditPost.bind(this)
         this.handleFileInput = this.handleFileInput.bind(this)
         this.checkIfAdmin()
 
@@ -56,21 +56,21 @@ class createpost extends React.Component {
         }
     }
 
-    async handleCreatePost() {
+    async handleEditPost() {
         this.setState({ errorMessage: "" })
         if (!this.state.articleCreated) {
+            const exacttitle = document.getElementById('post-exact-title').value
             const title = document.getElementById('post-title').value
             const author = document.getElementById('post-author').value
             const image = document.getElementById('post-image').value
             const video = document.getElementById('post-video').value
-            const topic = document.getElementById('post-topic').value
             const information = document.getElementById('post-info').value
-            if (title && author && image && video && information) {
+            if (exacttitle !== "") {
                 this.setState({ articleCreated: true })
                 const loadingSpan = document.getElementsByClassName("loading-span")[0]
                 loadingSpan.innerHTML = ""
                 loadingSpan.classList += " loading"
-                if (!image.includes("https://drive.google.com/uc?id=")) {
+                if (!image.includes("https://drive.google.com/uc?id=") && image !== "") {
                     await fetch(image).then(async (res) => {
                         const blob = await res.blob()
                         const file = new File([blob], "image.png", { type: blob.type })
@@ -82,35 +82,80 @@ class createpost extends React.Component {
                         })
                     })
                 }
+
+
                 continueInterval = setInterval(async () => {
-                    if (document.getElementById('post-image').value.includes("https://drive.google.com/uc?id=")) {
+                    if (video !== "") {
+                        if (document.getElementById('post-image').value.includes("https://drive.google.com/uc?id=") || image==="") {
+                            clearInterval(continueInterval)
+
+
+                            const link = video.split('=')[1]
+                            const res = await fetch('/info/createbackupvid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link: link }) })
+                            const reslink = await res.json()
+                            console.log(reslink)
+                            const backupvid = 'https://drive.google.com/file/d/' + reslink.link + '/preview'
+                            await fetch('/info/editpost', {
+                                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+                                    exacttitle: exacttitle,
+                                    title: title,
+                                    author: author,
+                                    urlToImage: image,
+                                    vid: video,
+                                    backupvid: backupvid,
+                                    description: information
+                                })
+                            }).then(async (res) => {
+                                if (res.status !== 200) {
+                                    const erro = await res.json()
+                                    this.setState({ errorMessage: erro.errormessage })
+                                    this.setState({ articleCreated: false })
+                                    const loadingSpan = document.getElementsByClassName("loading-span")[0]
+                                    loadingSpan.innerHTML = "Edit Article"
+                                    loadingSpan.classList += "loading-span"
+                                } else {
+                                    this.props.history.push('/')
+                                }
+                            })
+
+                        }
+                    } else {
                         clearInterval(continueInterval)
-
-
-                        const link = video.split('=')[1]
-                        const res = await fetch('/info/createbackupvid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link: link }) })
-                        const reslink = await res.json()
-                        const backupvid = 'https://drive.google.com/file/d/' + reslink.link + '/preview'
-                        await fetch('/info/createarticle', {
+                        await fetch('/info/editpost', {
                             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+                                exacttitle: exacttitle,
                                 title: title,
                                 author: author,
                                 urlToImage: image,
-                                vid: video,
-                                topic:topic,
-                                backupvid: backupvid,
+                                vid: "",
+                                backupvid: "",
                                 description: information
                             })
+                        }).then(async (res) => {
+                            if (res.status !== 200) {
+                                const erro = await res.json()
+                                this.setState({ errorMessage: erro.errormessage })
+                                this.setState({ articleCreated: false })
+                                const loadingSpan = document.getElementsByClassName("loading-span")[0]
+                                loadingSpan.innerHTML = "Edit Article"
+                                loadingSpan.classList += "loading-span"
+                            } else {
+                                this.props.history.push('/')
+                            }
                         })
-                        this.props.history.push('/')
+                        
                     }
+
 
                 }, 3000)
 
 
+
             } else {
-                this.setState({ errorMessage: "Please fill out all fields" })
+                this.setState({ errorMessage: "Invalid Title" })
             }
+        }else{
+            this.setState({ errorMessage: "Performing changes already (If its over 30 seconds refresh page and try again)" })
         }
 
 
@@ -133,6 +178,7 @@ class createpost extends React.Component {
                     <div className="create-page-container">
                         <div className="create-middle-container">
                             <div className="inputfield-container">
+                                <input autoComplete="off" spellCheck={false} id="post-exact-title" className="post-input" placeholder="Exact title of article to edit"></input>
                                 <input autoComplete="off" spellCheck={false} id="post-title" className="post-input" placeholder="Title"></input>
                                 <input autoComplete="off" spellCheck={false} id="post-author" className="post-input" placeholder="Author"></input>
                                 <input autoComplete="off" spellCheck={false} id="post-topic" className="post-input" placeholder="Topic"></input>
@@ -147,7 +193,7 @@ class createpost extends React.Component {
                                 <input autoComplete="off" spellCheck={false} id="post-video" className="post-input" placeholder="Video Link"></input>
                                 <textarea autoComplete="off" spellCheck={false} id="post-info" className="post-input" placeholder="Information"></textarea>
                                 <span id="error-Message">{this.state.errorMessage}</span>
-                                <button onClick={this.handleCreatePost} className="submitcreate"><span className="loading-span">Add Article</span></button>
+                                <button onClick={this.handleEditPost} className="submitcreate"><span className="loading-span">Edit Article</span></button>
                             </div>
                         </div>
                     </div>
@@ -157,4 +203,4 @@ class createpost extends React.Component {
     }
 }
 
-export default createpost;
+export default editpost;

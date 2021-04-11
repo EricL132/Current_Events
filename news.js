@@ -24,8 +24,8 @@ function getNews(keyword) {
         //Request to api for news
         await newsapi.v2.everything({
             q: keyword,
-        
-
+            from: yesterday,
+            to:today 
         }).then(response => {
             try {
                 //goes through returned data   
@@ -44,8 +44,6 @@ function getNews(keyword) {
                             publishedAt: publishedA,
                             content: article.content,
                             topic: keyword,
-                            vid: 'https://www.youtube.com/embed/kaGO-_GCwHk',
-                            backupvid: 'https://drive.google.com/file/d/1U0N635TIBrfEihgoZMyqWn7tDgrmeQEt/preview'
 
                         })
                         //saves to databse
@@ -70,14 +68,15 @@ async function getnewNewsFunc() {
 
 }
 
+/* async function deleteAll(){
+    await articleSchema.remove({})
+}
 
-
-
+deleteAll() */
 //Checks if news are new
 function checkIfNew(article) {
     return new Promise(async (resolve) => {
         const articleFound = await articleSchema.findOne({ title: article.title })
-        console.log(article)
         if (articleFound) {
             return resolve(false)
         } else {

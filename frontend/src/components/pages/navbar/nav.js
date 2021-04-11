@@ -24,7 +24,9 @@ class nav extends React.Component {
         this.handleGoToHome = this.handleGoToHome.bind(this)
         this.handleLoadCreate = this.handleLoadCreate.bind(this)
         this.handleAccount = this.handleAccount.bind(this)
-        this.state = { admin: false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false }
+        this.handleDisplayMode = this.handleDisplayMode.bind(this)
+        this.handleLoadEdit = this.handleLoadEdit.bind(this)
+        this.state = { admin: false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false, modeText: [" Dark Mode"] }
         this.checkForLogin()
     }
 
@@ -33,15 +35,30 @@ class nav extends React.Component {
 
     componentDidMount() {
         //this.getWeather()
+        const darkmode = localStorage.getItem("darkmode")
+        if (darkmode !== null) {
+            if (darkmode === "true") {
+                this.setState({ darkmode: false }, () => {
+                    this.handleDarkMode("firstload")
+                })
+            } else {
+                this.setState({ darkmode: true }, () => {
+                    this.handleDarkMode("firstload")
+                })
+            }
+
+        }
         interval = setInterval(() => {
             this.checkAccess()
         }, 120000)
+
+
     }
 
     async checkForLogin() {
         const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
         if (res.status === 200) {
-            
+
             this.setState({ accessToken: res.headers.get('access-token') })
             const tokenInfo = await this.jwtDecode()
             this.setState({ email: tokenInfo.email })
@@ -89,6 +106,12 @@ class nav extends React.Component {
             this.setState({ errorMessage: "" })
         }
     }
+
+    handleDisplayMode() {
+        this.props.handleDisplayMode()
+        localStorage.setItem('displayslide', this.props.displaySlide)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
     handleShowLogin(e) {
         this.setState({ errorMessage: "" })
         if (!this.state.showLogin) {
@@ -109,8 +132,8 @@ class nav extends React.Component {
         }
     }
 
-    handleAccount(){
-        this.setState({showmenu:false})
+    handleAccount() {
+        this.setState({ showmenu: false })
         this.props.history.push('/account')
     }
     async handleSignup() {
@@ -136,12 +159,12 @@ class nav extends React.Component {
             this.setState({ errorMessage: statusMessage.status })
             loadingContainer.innerHTML = "Sign Up"
         } else {
-            this.state.loggedInName = first.charAt(0).toUpperCase() + first.slice(1)
-            this.state.email = email
-            this.state.showLogin = false
-            this.state.forgotpassword = false
-            this.state.signUp = false
-            this.state.showmenu = false
+            this.setState({ loggedInName: first.charAt(0).toUpperCase() + first.slice(1) })
+            this.setState({ email: email })
+            this.setState({ showLogin: false })
+            this.setState({ forgotpassword: false })
+            this.setState({ signUp: false })
+            this.setState({ showmenu: false })
             this.setState({ loggedIn: true })
         }
     }
@@ -175,8 +198,9 @@ class nav extends React.Component {
 
     }
 
-    async handleDarkMode() {
+    async handleDarkMode(item) {
         if (this.state.darkmode) {
+            console.log('vxc')
             const navbar = document.getElementById('nav-container')
 
             const loginB = navbar.children[0].children[0]
@@ -194,6 +218,10 @@ class nav extends React.Component {
             if (moonicon) {
                 moonicon.style.border = '1px solid black'
             }
+            if (item !== "firstload") {
+                localStorage.setItem("darkmode", false)
+            }
+
             this.state.darkmode = false
         } else {
             const navbar = document.getElementById('nav-container')
@@ -211,6 +239,10 @@ class nav extends React.Component {
             }
             if (moonicon) {
                 moonicon.style.border = ''
+            }
+            if (item !== "firstload") {
+                localStorage.setItem("darkmode", true)
+
             }
             this.state.darkmode = true
 
@@ -273,17 +305,22 @@ class nav extends React.Component {
 
     handleGoToHome() {
         if (window.location.pathname === "/") {
-            this.setState({showmenu:false})
-            document.getElementsByClassName('page-container')[0].scrollIntoView({ block: 'start', behavior: 'smooth' })
+            this.setState({ showmenu: false })
+            window.scrollTo({top:0,behavior:'smooth'})
         } else {
-            this.setState({showmenu:false})
+            this.setState({ showmenu: false })
             this.props.history.push('/')
         }
     }
 
-    handleLoadCreate(){
-        this.setState({showmenu:false})
+    handleLoadCreate() {
+        this.setState({ showmenu: false })
         this.props.history.push('/createpost')
+    }
+
+    handleLoadEdit(){
+        this.setState({ showmenu: false })
+        this.props.history.push('/editpost')
     }
     render() {
         return (
@@ -314,13 +351,32 @@ class nav extends React.Component {
                             {this.state.showmenu ?
                                 <div id="dropdown-menu">
                                     <ul>
-                                        <li >
-                                            <button className="dropdown-button" onClick={this.handleDarkMode}><i className="far fa-moon"> Dark Mode</i></button>
-                                        </li>
-                                        {this.state.admin ?
-                                            <li>
-                                                <button onClick={this.handleLoadCreate}>Create Post </button>
+
+                                        {this.state.darkmode ?
+                                            <li >
+                                                <button className="dropdown-button" onClick={this.handleDarkMode}><i className="far fa-moon"></i> Light Mode</button>
                                             </li>
+                                            :
+                                            <li >
+                                                <button className="dropdown-button" onClick={this.handleDarkMode}><i className="far fa-moon"></i> Dark Mode</button>
+                                            </li>}
+                                        {this.props.displaySlide ?
+                                            <li >
+                                                <button className="dropdown-button" id="displaymode" onClick={this.handleDisplayMode}> Grid Mode</button>
+                                            </li>
+                                            :
+                                            <li >
+                                                <button className="dropdown-button" id="displaymode" onClick={this.handleDisplayMode}> Topic Mode</button>
+                                            </li>}
+                                        {this.state.admin ?
+                                            <>
+                                                <li>
+                                                    <button onClick={this.handleLoadCreate}>Create Post</button>
+                                                </li>
+                                                <li>
+                                                    <button onClick={this.handleLoadEdit}>Edit Post</button>
+                                                </li>
+                                            </>
                                             : null}
 
                                         <li>

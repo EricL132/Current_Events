@@ -56,8 +56,45 @@
     color: var(--text-color-white);
     position: relative;
     margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+#image-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
 
+#addImageByFile-container{
+    right: .5rem;
+    position: absolute;
+}
 
+#addfileButton{
+    margin-top: 1rem;
+    cursor: pointer;
+    background-color: var(--input-color);
+    color: white;
+    outline: none;
+    border-radius: 5px;
+    border: none;
+    padding: .5rem;
+}
 
+#addfileButton:active{
+    transform: translateY(1px);
+}
+
+#file-input{
+    display: none;
+}
+
+#error-Message{
+    position: absolute;
+    bottom: .5rem;
+    color: red;
+}

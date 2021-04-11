@@ -8,7 +8,6 @@ class home extends React.Component {
         super(props)
 
         this.state = { articles: [], articlesFromSearch: [], columnsize: 1500, boxsize: 280 }
-        this.handleLoadArticle = this.handleLoadArticle.bind(this)
         this.getSettings = this.getSettings.bind(this)
         this.handleRightScroll = this.handleRightScroll.bind(this)
         this.getArticles()
@@ -26,19 +25,11 @@ class home extends React.Component {
                     }
 
                 })
-                /* const result = article.filter((item) => {
-                    const title = item.title.toLowerCase()
-                    const searchvalue = searchParam.value.toLowerCase()
-                    return title.includes(searchvalue)
-                })
-
-                this.setState({ articles: [result] }) */
-                // console.log(article)
-
             })
             this.setState({ articles: res })
 
         })
+
     }
     async getSettings() {
         const columnsize = localStorage.getItem('columnsize')
@@ -51,21 +42,12 @@ class home extends React.Component {
         }
     }
 
-    async handleLoadArticle(e) {
-        const docu = e.nativeEvent.path.filter((ele) => {
-            try { return ele.classList.contains('home-articles-container') } catch (err) { return null }
-        })
-        const param = await docu[0].getAttribute('title')
-        const queryString = querystring.stringify({ title: param })
-        this.props.history.push(`/article/?${queryString}`)
 
-    }
     async getArticles() {
         const res = await fetch('/info/articles')
         const articlesInfo = await res.json()
         this.setState({ articles: articlesInfo.articles })
         this.setState({ articlesFromSearch: articlesInfo.articles })
-        console.log(articlesInfo.articles)
     }
     handleRightScroll(e) {
         let pa;
@@ -104,37 +86,56 @@ class home extends React.Component {
 
                 {this.state.articles ?
                     <div className="home-all-articles-container" style={{ maxWidth: `${this.state.columnsize}px` }}>
-                        {this.state.articles.map((articleType, i) => {
-                            return <div key={i} className="topics-container">
-                                {articleType[0] ?
-                                    <h1 className="topic-title">{articleType[0].topic.substring(0, 1).toUpperCase() + articleType[0].topic.substring(1, articleType[0].topic.length)}</h1>
 
-                                    : null}
+                        {this.props.displaySlide ?
+
+                            this.state.articles.slice(0).reverse().map((articleType, i) => {
+                                return <div key={i} className="topics-container">
+                                    {articleType[0] ?
+                                        <h1 className="topic-title">{articleType[0].topic.substring(0, 1).toUpperCase() + articleType[0].topic.substring(1, articleType[0].topic.length)}</h1>
+
+                                        : null}
 
 
 
-                                <div className="topic-articles">
-                                    {articleType.map((article, i) => {
-                                        return <div key={i} title={article.title} onClick={this.handleLoadArticle} className="home-articles-container" style={{ minWidth: `${this.state.boxsize}px` }}>
-                                            <img src={article.urlToImage} alt=""></img>
+                                    <div className="topic-articles">
+                                        {articleType.slice(0).reverse().map((article, i) => {
+                                            const queryString = querystring.stringify({ title: article.title })
+                                            return <div key={i} className="home-articles-container" style={{ minWidth: `${this.state.boxsize}px` }}>
+                                                <a href={`/article/?${queryString}`}><img src={article.urlToImage} alt=""></img></a>
+                                                <span>{article.title}</span>
+                                            </div>
+                                        })
+                                        }
+
+
+
+                                        <div className="slide-button-container-left">
+                                            <button className="slide-article-button" onClick={this.handleLeftScroll}><i className="fas fa-arrow-left"></i></button>
+                                        </div>
+                                        <div className="slide-button-container-right">
+                                            <button className="slide-article-button" onClick={this.handleRightScroll}><i className="fas fa-arrow-right"></i></button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            })
+
+                            : <div  className="home-all-articles-container" style={{maxWidth:`${this.state.columnsize}px`}}>
+                                {this.state.articles.slice(0).reverse().map((item) => {
+                                    return item.slice(0).reverse().map((article,i) => {
+                                        const queryString = querystring.stringify({ title: article.title })
+                                        return <div key={i} title={article.title} onClick={this.handleLoadArticle} className="home-articles-container" style={{ maxWidth: `${this.state.boxsize}px` }}>
+                                             <a href={`/article/?${queryString}`}><img src={article.urlToImage} alt=""></img></a>
                                             <span>{article.title}</span>
                                         </div>
                                     })
-                                    }
+                                })
 
+                                }
+                            </div>}
 
-
-                                    <div className="slide-button-container-left">
-                                        <button className="slide-article-button" onClick={this.handleLeftScroll}><i className="fas fa-arrow-left"></i></button>
-                                    </div>
-                                    <div className="slide-button-container-right">
-                                        <button className="slide-article-button" onClick={this.handleRightScroll}><i className="fas fa-arrow-right"></i></button>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        })}
                     </div>
                     : null}
 

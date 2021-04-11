@@ -5,15 +5,12 @@ const mongoose = require('mongoose')
 const articlesSchema = new mongoose.Schema({
     title:{
         type:String,
-        required:true
     },
     author:{
         type:String,
-        required:true
     },
     description:{
         type:String,
-        required:true
     },
     vid:{
         type:String
@@ -29,7 +26,6 @@ const articlesSchema = new mongoose.Schema({
     },
     publishedAt:{
         type:String,
-        required:true
     },
     content:{
         type:String,
