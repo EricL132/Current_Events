@@ -300,7 +300,15 @@ class nav extends React.Component {
 
     async handleForgotPass(e) {
         e.preventDefault()
-
+        const email = document.getElementById("email").value
+        const res  = await fetch('/user/account/resetpass',{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})})
+        if(res.status!==200){
+            const rep = await res.json()
+            this.setState({errorMessage:rep.status})
+        }else{
+            document.getElementsByClassName('login-form')[0].innerHTML = "<span class='email-sent-span'>Email Sent</span>"
+        }
+        
     }
 
     handleGoToHome() {

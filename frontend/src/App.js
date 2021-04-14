@@ -46,6 +46,7 @@ class App extends React.Component {
           </Route>
           <Route path="/createpost" exact component={CreatePost}></Route>
           <Route path="/editpost" exact component={EditPost}></Route>
+          <Route path="/resetpassword" exact component={ResetPass}></Route>
           <Route path='*' exact component={NoPage}></Route>
         </Switch>
         

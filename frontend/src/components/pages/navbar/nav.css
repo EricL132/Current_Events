@@ -246,6 +246,12 @@
 }
 
 
+.email-sent-span{
+    color: white;
+    font-size: 3rem;
+    margin-top: 3rem;
+    font-weight: bold;
+}
 .home-button{
     height: 36px;
     width: 100px;
