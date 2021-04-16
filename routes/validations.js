@@ -84,7 +84,33 @@ const resetpassConfirmValidation = (data)=>{
 
 }
 
+const changepassValidation = (data)=>{
+    const schema = Joi.object({
+        email: Joi.string().min(6).required().email().messages({
+            'any.empty': `Invalid email`
+        }),
+        currentpass: Joi.string().min(6).regex(/.*[0-9].*$/).required().messages({
+            'string.base': `Password should be a string`,
+            'string.empty': `Password can not be empty`,
+            'string.min': `Pssword must be at least 6 characters`,
+            'any.required': `Password is required`,
+            'string.pattern.base': "Password must contain 1 number",
+            'any.empty': `Invalid password`
+        }),
+        newpass: Joi.string().min(6).regex(/.*[0-9].*$/).required().messages({
+            'string.base': `Password should be a string`,
+            'string.empty': `Password can not be empty`,
+            'string.min': `Pssword must be at least 6 characters`,
+            'any.required': `Password is required`,
+            'string.pattern.base': "Password must contain 1 number",
+            'any.empty': `Invalid password`
+        })
+    })
+    return schema.validate(data)
+}
+
 module.exports.registerValidation = registerValidation
 module.exports.loginValidation = loginValidation
 module.exports.resetpassValidation = resetpassValidation
 module.exports.resetpassConfirmValidation = resetpassConfirmValidation
+module.exports.changepassValidation = changepassValidation

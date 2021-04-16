@@ -8,7 +8,6 @@ const ytdl = require('ytdl-core');
 const { google } = require('googleapis');
 const path = require('path');
 const multer = require('multer');
-const { mapReduce } = require('../models/articles');
 const keywords = ["", "business", "entertainment", "general", "health", "science", "sports", "technology", "bitcoin", "apple", "google", "amazon", "us"]
 
 const multerstorage = multer.diskStorage({

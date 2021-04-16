@@ -10,8 +10,9 @@ class account extends React.Component {
         this.checkAccess = this.checkAccess.bind(this)
         this.changeColumnSize = this.changeColumnSize.bind(this)
         this.changeBoxSize = this.changeBoxSize.bind(this)
+        this.handleChangePass = this.handleChangePass.bind(this)
         this.state = {
-            accessToken: "none", loggedIn: true, accountInfo: {}, showuser: true, showadmin: false, boxsize: "", columnsize:""
+            accessToken: "none", loggedIn: true, accountInfo: {}, showuser: true, showadmin: false, boxsize: "", columnsize: ""
         }
     }
 
@@ -19,7 +20,7 @@ class account extends React.Component {
         await this.checkAccess()
         const decoded = jwt_decode(this.state.accessToken);
         this.setState({ accountInfo: decoded })
-        this.setState({ userEmail:decoded.email.slice(0,1).toUpperCase()+decoded.email.slice(1,decoded.email.length)})
+        this.setState({ userEmail: decoded.email.slice(0, 1).toUpperCase() + decoded.email.slice(1, decoded.email.length) })
         const columnSize = localStorage.getItem('columnsize')
         const boxSize = localStorage.getItem('boxsize')
         if (columnSize) {
@@ -27,11 +28,11 @@ class account extends React.Component {
         } else {
             this.setState({ columnsize: 1500 })
         }
-        if(boxSize){
-            this.setState({boxsize:boxSize})
-            
-        }else{
-            this.setState({boxsize:300})
+        if (boxSize) {
+            this.setState({ boxsize: boxSize })
+
+        } else {
+            this.setState({ boxsize: 300 })
         }
 
     }
@@ -41,7 +42,7 @@ class account extends React.Component {
             const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
             if (res.status === 200) {
                 this.setState({ accessToken: res.headers.get('access-token') })
-                
+
             } else {
                 this.props.history.push('/')
             }
@@ -68,6 +69,26 @@ class account extends React.Component {
     componentDidMount() {
         this.getUserInfo()
     }
+
+    async handleChangePass(e) {
+        e.preventDefault()
+        const currentPass = document.getElementById("currentpass").value
+        const newpass = document.getElementById("newpass").value
+        const confirm = document.getElementById("confirmnewpass").value
+        if (newpass.length < 6) return this.setState({ errorMessage: "Password must be at least 6 characters" })
+        if (newpass !== confirm) return this.setState({ errorMessage: "Passwords do not match" })
+        if (currentPass !== "") {
+            document.getElementById("change-pass-button").classList.add("disabled")
+            const res = await fetch('/user/account/changepass', { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: this.state.accountInfo.email, currentpass: currentPass, newpass: newpass }) })
+            const error = await res.json()
+            document.getElementById("change-pass-button").classList.remove("disabled")
+            document.getElementById("currentpass").value = ""
+            document.getElementById("newpass").value = ""
+            document.getElementById("confirmnewpass").value = ""
+            return this.setState({ errorMessage: error.status })
+
+        }
+    }
     render() {
         return (
             <div className="account-page-container">
@@ -86,16 +107,21 @@ class account extends React.Component {
                                 <div className="user-config-container">
                                     <div className="user-info-container">
                                         <label>Email</label>
-                                        <span style={{backgroundColor:"var(--lighter-background)"}}>{this.state.userEmail}</span>
+                                        <span style={{ backgroundColor: "var(--lighter-background)" }}>{this.state.userEmail}</span>
                                     </div>
-                                    <div className="user-info-container">
+
+
+                                    <form className="user-info-container">
                                         <label>Change Password</label>
-                                        <input className="default-input user-info-input" placeholder="Current Password"></input>
-                                        <input className="default-input user-info-input" placeholder="New Password"></input>
-                                        <input className="default-input user-info-input" placeholder="Confirm New Password"></input>
-                                        <button className="default-blue-button user-info-button">Change Password</button>
-                                    </div>
-                                   {/*  <div className="homecolumns-container">
+                                        <input autoComplete="off" spellCheck={false} id="currentpass" type="password" className="default-input user-info-input" placeholder="Current Password"></input>
+                                        <input autoComplete="off" spellCheck={false} id="newpass" type="password" className="default-input user-info-input" placeholder="New Password"></input>
+                                        <input autoComplete="off" spellCheck={false} id="confirmnewpass" type="password" className="default-input user-info-input" placeholder="Confirm New Password"></input>
+                                        <button id="change-pass-button" className="default-blue-button user-info-button" onClick={this.handleChangePass}>Change Password</button>
+                                    </form>
+                                    <div className="error-container">{this.state.errorMessage}</div>
+
+
+                                    {/*  <div className="homecolumns-container">
                                         <label for="homecolumnsinput">Column Size</label>
                                         <input id="homecolumnsinput" type="number" placeholder={this.state.columnsize}></input>
                                         <button id="change-column-button" onClick={this.changeColumnSize} className="account-admin-button">Change</button>

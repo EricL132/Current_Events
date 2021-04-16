@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {registerValidation,loginValidation,resetpassValidation,resetpassConfirmValidation} = require('./validations')
+const {registerValidation,loginValidation,resetpassValidation,resetpassConfirmValidation,changepassValidation} = require('./validations')
 const User = require('../models/user')
 const RefreshTokens = require('../models/refreshtokens')
 const ResetTokens = require('../models/resettokens')
@@ -10,6 +10,7 @@ const crypto  = require('crypto')
 const nodemailer = require('nodemailer')
 const path = require('path');
 const querystring = require('querystring')
+const jwt_decode = require('jwt-decode');
 
 //POST route to register account
 router.post('/register',async (req,res)=>{
@@ -176,8 +177,25 @@ router.post('/reset',async (req,res)=>{
 
 })
 
-router.post('/changepass',(req,res)=>{
-    
+router.post('/changepass',async (req,res)=>{
+    const {error} = changepassValidation(req.body)
+    if(error) return res.status(400).send({status:error.details[0].message})
+    const login = checkLogin(req)
+    if(!login) return res.status(400).send({status:"Log out and try again"})
+    const email = req.body.email.toLowerCase()
+    const user = await User.findOne({email}) 
+    if(!user) return res.status(400).send({status:"Unable to find user"})
+    const validPassword = await bcrypt.compare(req.body.currentpass,user.password)
+    if(!validPassword) return res.status(400).send({status:"Current password is wrong"})
+    const salt = await bcrypt.genSalt(15)
+    const hashPassword = await bcrypt.hash(req.body.newpass,salt)
+    user.password = hashPassword
+    await user.save()
+    return res.status(200).send({status:"Successfully changed password"})
 })
-
+async function checkLogin(req) {
+    const checkadmin = await fetch(`http://${req.headers.host}/user/account/access`, { method: 'GET', headers: { 'cookie': 'jwt=' + req.cookies.jwt, 'access-token': 'none' } })
+    var decoded = jwt_decode(checkadmin.headers.get('access-token'));
+    return decoded.name
+}
 module.exports = router
