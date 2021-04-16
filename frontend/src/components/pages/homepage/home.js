@@ -85,7 +85,7 @@ class home extends React.Component {
             <div className="page-container">
 
                 {this.state.articles ?
-                    <div className="home-all-articles-container" style={{ maxWidth: `${this.state.columnsize}px` }}>
+                    <div className="home-all-articles-container" style={{ minWidth: `1500px` }}>
 
                         {this.props.displaySlide ?
 
@@ -101,7 +101,7 @@ class home extends React.Component {
                                     <div className="topic-articles">
                                         {articleType.slice(0).reverse().map((article, i) => {
                                             const queryString = querystring.stringify({ title: article.title })
-                                            return <div key={i} className="home-articles-container" style={{ minWidth: `${this.state.boxsize}px` }}>
+                                            return <div key={i} className="home-articles-container" style={{ minWidth: `280px` }}>
                                                 <a href={`/article/?${queryString}`}><img src={article.urlToImage} alt=""></img></a>
                                                 <span>{article.title}</span>
                                             </div>

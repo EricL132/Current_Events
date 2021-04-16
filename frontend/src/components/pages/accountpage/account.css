@@ -88,7 +88,10 @@
     width: 80px;
 }
 
-
+#size-buttons-container{
+    display: flex;
+    flex-direction: row;
+}
 .homecolumns-container button{
     width: 120px;
     height: 35px;

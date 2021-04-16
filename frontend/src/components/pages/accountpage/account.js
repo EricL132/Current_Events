@@ -120,19 +120,20 @@ class account extends React.Component {
                                     </form>
                                     <div className="error-container">{this.state.errorMessage}</div>
 
-
-                                    {/*  <div className="homecolumns-container">
+                                    <div id="size-buttons-container">
+                                    <div className="homecolumns-container">
                                         <label for="homecolumnsinput">Column Size</label>
                                         <input id="homecolumnsinput" type="number" placeholder={this.state.columnsize}></input>
                                         <button id="change-column-button" onClick={this.changeColumnSize} className="account-admin-button">Change</button>
 
                                     </div>
                                     <div className="homecolumns-container">
-
                                         <label for="box-size-input">Box Size</label>
                                         <input id="box-size-input" type="number" placeholder={this.state.boxsize}></input>
                                         <button id="change-box-button" onClick={this.changeBoxSize} className="account-admin-button">Change</button>
-                                    </div> */}
+                                    </div>
+                                    </div> 
+                                   
                                 </div>
                                 : <>{
                                     this.state.showadmin ?
