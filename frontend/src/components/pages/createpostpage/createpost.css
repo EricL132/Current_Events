@@ -36,7 +36,9 @@
     border-radius: 5px;
 }
 
-
+.post-input::placeholder{
+    color: var(--text-color);
+}
 #post-info{
     min-height: 25rem;
     padding-bottom: -1rem;

@@ -8,7 +8,7 @@ const ytdl = require('ytdl-core');
 const { google } = require('googleapis');
 const path = require('path');
 const multer = require('multer');
-const keywords = ["", "business", "entertainment", "general", "health", "science", "sports", "technology", "bitcoin", "apple", "google", "amazon", "us"]
+const user = require('../models/user');
 
 const multerstorage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -34,16 +34,16 @@ router.get('/articles', async (req, res) => {
     let articleTopic = await articlesSchema.find({})
     await Promise.all(articleTopic.map((article) => {
         if (map.has(article.topic)) {
-            map.set(article.topic,[...map.get(article.topic),article])
+            map.set(article.topic, [...map.get(article.topic), article])
         } else {
             map.set(article.topic, [article])
         }
     }))
     const mapVals = []
-    for(const [k,v] of map){
+    for (const [k, v] of map) {
         mapVals.push(v)
     }
-    if (mapVals) return res.status(200).send({ articles:   mapVals })
+    if (mapVals) return res.status(200).send({ articles: mapVals })
 })
 
 
@@ -104,9 +104,8 @@ async function saveToDrive(link) {
 //POST request to save a video to drive
 router.post('/createbackupvid', async (req, res) => {
     //Checks if admin
-    const adminCheck = await checkAdmin(req)
-    if (adminCheck === false) return res.status(400).end()
-
+    const userInfo = await checkLogin(req)
+    if (userInfo.admin === false && userInfo.subadmin === false) return res.status(400).send({ "status": "Admin privileges required to save videos" })
     try {
         //Downloads youtube video to server
         ytdl(`https://www.youtube.com/watch?v=${req.body.link}`).pipe(fs.createWriteStream('video.mp4').on('finish', async () => {
@@ -132,44 +131,35 @@ router.get('/findarticle', async (req, res) => {
 
 //POST route to create new article
 router.post('/createarticle', async (req, res) => {
-    //Checks if admin
-    const adminCheck = checkAdmin(req)
-    if (adminCheck === false) return res.status(400).end()
-    //New article info
+    const userInfo = await checkLogin(req)
+    if (!userInfo) return res.status(403).send({ "status": "Unauthorized" })
+    const findUser = await user.findOne({email:userInfo.email})
     const newInfo = req.body
-    //Gets current date
     const date = new Date()
+    newInfo.userID = findUser._id
     newInfo.publishedAt = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
-    //Saves new article to database
-    let checkArticle = await articlesSchema.findOneAndUpdate({ title: req.body.title }, newInfo, { new: true, overwrite: true })
-
-    if (!checkArticle) {
-        const newArticle = new articlesSchema(newInfo)
-        await newArticle.save()
-    }
+    /*     let checkArticle = await articlesSchema.findOneAndUpdate({ title: req.body.title }, newInfo, { new: true, overwrite: true })
+        if (!checkArticle) { */
+    const newArticle = new articlesSchema(newInfo)
+    await newArticle.save()
+    /*     } */
 
 
     res.status(200).end()
 
 })
 
-//Function to check if user is admin
-async function checkAdmin(req) {
-    const checkadmin = await fetch(`http://${req.headers.host}/user/account/access`, { method: 'GET', headers: { 'cookie': 'jwt=' + req.cookies.jwt, 'access-token': 'none' } })
-    var decoded = jwt_decode(checkadmin.headers.get('access-token'));
-    return decoded.admin
-}
-//Function to check if user is logged in
+
+//Function to check if user info
 async function checkLogin(req) {
     const checkadmin = await fetch(`http://${req.headers.host}/user/account/access`, { method: 'GET', headers: { 'cookie': 'jwt=' + req.cookies.jwt, 'access-token': 'none' } })
     var decoded = jwt_decode(checkadmin.headers.get('access-token'));
-    return decoded.name
+    return decoded
 }
 
 //Delete all files from google drive
 async function deleteAll() {
     const b = await drive.files.list({})
-    console.log(b)
     b.data.files.map(async (file) => {
         await drive.files.delete({
             fileId: file.id
@@ -211,7 +201,6 @@ router.post('/addComment', async (req, res) => {
  */
 
 router.post('/saveimage', upload.single("file"), async (req, res) => {
-    console.log(req.file.filename)
     const saveDrive = await drive.files.create({
         requestBody: {
             parents: ["11_ChHCDC7ZNM01ZNgNQDZ5A-8qVu9iA3"],
@@ -223,15 +212,14 @@ router.post('/saveimage', upload.single("file"), async (req, res) => {
         }
     })
     fs.unlink(path.join(__dirname, '../upload/' + req.file.filename), (err) => { })
-    console.log(saveDrive.data.id)
     res.send({ imagelink: saveDrive.data.id })
 })
 
 
 
 router.post('/editpost', async (req, res) => {
-    const adminCheck = await checkAdmin(req)
-    if (adminCheck === false) return res.status(400).send({ errorMessage: "Not Admin" })
+    const userInfo = await checkLogin(req)
+    if (userInfo.admin === false) return res.status(400).send({ errorMessage: "Not Admin" })
 
     const articleToEdit = await articlesSchema.findOne({ title: req.body.exacttitle })
     if (!articleToEdit) return res.status(400).send({ errormessage: "Article not found" })
@@ -240,6 +228,8 @@ router.post('/editpost', async (req, res) => {
             articleToEdit[key] = value;
         }
     }
+    const date = new Date()
+    articleToEdit.editDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
     await articleToEdit.save()
     return res.status(200).end()
 

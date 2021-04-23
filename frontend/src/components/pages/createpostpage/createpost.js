@@ -6,27 +6,20 @@ class createpost extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            accessToken: "none", loggedIn: true, pageLoaded: false, errorMessage: "", articleCreated: false
+            accessToken: "none", loggedIn: true, errorMessage: "", articleCreated: false
         }
         this.checkIfAdmin = this.checkIfAdmin.bind(this)
         this.handleCreatePost = this.handleCreatePost.bind(this)
         this.handleFileInput = this.handleFileInput.bind(this)
-        this.checkIfAdmin()
 
     }
 
-    async checkIfAdmin() {
-        await this.checkAccess();
-        const tokenInfo = await this.jwtDecode()
-        if (tokenInfo.admin !== true) {
-            this.props.history.push('/')
-        }
-        this.setState({ pageLoaded: true })
+    componentDidMount(){
+        this.checkIfAdmin()
         document.getElementById("file-input").addEventListener('click', (e) => {
             e.stopPropagation();
             e.target.value = null
         })
-
         document.getElementById("file-input").addEventListener('change', async (e) => {
             const file = document.getElementById("file-input").files[0]
             const form = new FormData()
@@ -36,7 +29,13 @@ class createpost extends React.Component {
                 document.getElementById("post-image").value = `https://drive.google.com/uc?id=${resInfo.imagelink}`
             })
         })
+    }
 
+    async checkIfAdmin() {
+        await this.checkAccess();
+        const tokenInfo = await this.jwtDecode()
+        console.log(tokenInfo)
+        this.setState({tokenInfo:tokenInfo})
     }
 
     async jwtDecode() {
@@ -85,24 +84,63 @@ class createpost extends React.Component {
                 continueInterval = setInterval(async () => {
                     if (document.getElementById('post-image').value.includes("https://drive.google.com/uc?id=")) {
                         clearInterval(continueInterval)
-
-
-                        const link = video.split('=')[1]
-                        const res = await fetch('/info/createbackupvid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link: link }) })
-                        const reslink = await res.json()
-                        const backupvid = 'https://drive.google.com/file/d/' + reslink.link + '/preview'
-                        await fetch('/info/createarticle', {
-                            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
-                                title: title,
-                                author: author,
-                                urlToImage: image,
-                                vid: video,
-                                topic:topic,
-                                backupvid: backupvid,
-                                description: information
+                        if(this.state.tokenInfo.admin || this.state.tokenInfo.subadmin){
+                            const link = video.split('=')[1]
+                            fetch('/info/createbackupvid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link: link }) }).then(async (res) => {
+                                if (!res.ok) return res.json()
+                                const reslink = await res.json()
+                                const backupvid = 'https://drive.google.com/file/d/' + reslink.link + '/preview'
+                                await fetch('/info/createarticle', {
+                                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+                                        title: title,
+                                        author: author,
+                                        urlToImage: image,
+                                        vid: video,
+                                        topic: topic,
+                                        backupvid: backupvid,
+                                        description: information
+                                    })
+                                }).then((res)=>{
+                                    if(!res.ok) return res.json()
+                                    this.props.history.push('/')
+                                    
+                                }).then((data)=>{
+                                    if(data){
+                                        this.setState({articleCreated:false})
+                                        this.setState({errorMessage:data.status})
+                                    }
+                                })
+    
+                            }).then((data)=>{
+                                if(data){
+                                    this.setState({articleCreated:false})
+                                    this.setState({errorMessage:data.status})
+                                }
                             })
-                        })
-                        this.props.history.push('/')
+                        }else{
+                            await fetch('/info/createarticle', {
+                                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+                                    title: title,
+                                    author: author,
+                                    urlToImage: image,
+                                    vid: video,
+                                    topic: topic,
+                                    backupvid: "",
+                                    description: information
+                                })
+                            }).then((res)=>{
+                                if(!res.ok) return res.json()
+                                this.props.history.push('/')
+                                
+                            }).then((data)=>{
+                                if(data){
+                                    this.setState({articleCreated:false})
+                                    this.setState({errorMessage:data.status})
+                                }
+                            })
+                            
+                        }
+                       
                     }
 
                 }, 3000)
@@ -115,11 +153,6 @@ class createpost extends React.Component {
 
 
     }
-    componentDidMount() {
-
-
-
-    }
 
     handleFileInput() {
 
@@ -128,31 +161,28 @@ class createpost extends React.Component {
     }
     render() {
         return (
-            <>
-                {this.state.pageLoaded ?
-                    <div className="create-page-container">
-                        <div className="create-middle-container">
-                            <div className="inputfield-container">
-                                <input autoComplete="off" spellCheck={false} id="post-title" className="post-input" placeholder="Title"></input>
-                                <input autoComplete="off" spellCheck={false} id="post-author" className="post-input" placeholder="Author"></input>
-                                <input autoComplete="off" spellCheck={false} id="post-topic" className="post-input" placeholder="Topic"></input>
+            <div className="create-page-container">
+                <div className="create-middle-container">
+                    <div className="inputfield-container">
+                        <input autoComplete="off" spellCheck={false} id="post-title" className="post-input" placeholder="Title"></input>
+                        <input autoComplete="off" spellCheck={false} id="post-author" className="post-input" placeholder="Author"></input>
+                        <input autoComplete="off" spellCheck={false} id="post-topic" className="post-input" placeholder="Topic"></input>
 
-                                <div id="image-container">
-                                    <input autoComplete="off" spellCheck={false} id="post-image" className="post-input" placeholder="Image Link"></input>
-                                    <input id="file-input" type="file" accept="image/png, image/jpeg"></input>
-                                    <div id="addImageByFile-container">
-                                        <button id="addfileButton" onClick={this.handleFileInput}><i className="fas fa-plus"></i></button>
-                                    </div>
-                                </div>
-                                <input autoComplete="off" spellCheck={false} id="post-video" className="post-input" placeholder="Video Link"></input>
-                                <textarea autoComplete="off" spellCheck={false} id="post-info" className="post-input" placeholder="Information"></textarea>
-                                <span id="error-Message">{this.state.errorMessage}</span>
-                                <button onClick={this.handleCreatePost} className="submitcreate"><span className="loading-span">Add Article</span></button>
+                        <div id="image-container">
+                            <input autoComplete="off" spellCheck={false} id="post-image" className="post-input" placeholder="Image Link"></input>
+                            <input id="file-input" type="file" accept="image/png, image/jpeg"></input>
+                            <div id="addImageByFile-container">
+                                <button id="addfileButton" onClick={this.handleFileInput}><i className="fas fa-plus"></i></button>
                             </div>
                         </div>
+                        <input autoComplete="off" spellCheck={false} id="post-video" className="post-input" placeholder="Video Link"></input>
+                        <textarea autoComplete="off" spellCheck={false} id="post-info" className="post-input" placeholder="Information"></textarea>
+                        <span id="error-Message">{this.state.errorMessage}</span>
+                        <button onClick={this.handleCreatePost} className="submitcreate"><span className="loading-span">Add Article</span></button>
                     </div>
-                    : null}
-            </>
+                </div>
+            </div>
+
         )
     }
 }

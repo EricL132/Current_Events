@@ -10,19 +10,28 @@ class home extends React.Component {
         this.state = { articles: [], articlesFromSearch: [], columnsize: 1500, boxsize: 280 }
         this.getSettings = this.getSettings.bind(this)
         this.handleRightScroll = this.handleRightScroll.bind(this)
+        
+    }
+
+    componentWillMount(){
         this.getArticles()
     }
+
     componentDidMount() {
         this.getSettings()
         const searchParam = document.getElementById('search-input')
         searchParam.addEventListener('input', async () => {
+            const typeOf = this.props.typeOfSearch
             const res = this.state.articlesFromSearch.map((article) => {
                 return article.filter((item) => {
-                    const title = item.title.toLowerCase()
-                    const searchvalue = searchParam.value.toLowerCase()
-                    if (title.includes(searchvalue)) {
-                        return item
+                    if(item[typeOf]){
+                        const title = item[typeOf].toLowerCase()
+                        const searchvalue = searchParam.value.toLowerCase()
+                        if (title.includes(searchvalue)) {
+                            return item
+                        }
                     }
+                   
 
                 })
             })

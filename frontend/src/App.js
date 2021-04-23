@@ -14,8 +14,9 @@ class App extends React.Component {
   constructor(){
     super()
     this.state = {
-      displaySlide:true
+      displaySlide:true,typeOfSearch:"title"
     }
+    this.handleChangeSearchType = this.handleChangeSearchType.bind(this)
   }
   componentDidMount(){
     const display = localStorage.getItem("displayslide")
@@ -28,11 +29,14 @@ class App extends React.Component {
   handleDisplayMode(){
     this.setState({displaySlide:!this.state.displaySlide})
   }
+  handleChangeSearchType(type){
+    this.setState({typeOfSearch:type})
+  }
 
   render() {
     return (
       <BrowserRouter>
-        <Navbar handleDisplayMode = {this.handleDisplayMode.bind(this)} {...this.state}></Navbar>
+        <Navbar handleDisplayMode = {this.handleDisplayMode.bind(this)} {...this.state} handleChangeSearchType={this.handleChangeSearchType}></Navbar>
         
         <Switch>
      

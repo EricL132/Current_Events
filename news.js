@@ -44,7 +44,6 @@ function getNews(keyword) {
                             publishedAt: publishedA,
                             content: article.content,
                             topic: keyword,
-
                         })
                         //saves to databse
                         await a.save();

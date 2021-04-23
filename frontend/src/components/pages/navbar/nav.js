@@ -26,6 +26,7 @@ class nav extends React.Component {
         this.handleAccount = this.handleAccount.bind(this)
         this.handleDisplayMode = this.handleDisplayMode.bind(this)
         this.handleLoadEdit = this.handleLoadEdit.bind(this)
+        this.handleSearchReturn = this.handleSearchReturn.bind(this)
         this.state = { admin: false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false, modeText: [" Dark Mode"] }
         this.checkForLogin()
     }
@@ -301,20 +302,20 @@ class nav extends React.Component {
     async handleForgotPass(e) {
         e.preventDefault()
         const email = document.getElementById("email").value
-        const res  = await fetch('/user/account/resetpass',{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})})
-        if(res.status!==200){
+        const res = await fetch('/user/account/resetpass', { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
+        if (res.status !== 200) {
             const rep = await res.json()
-            this.setState({errorMessage:rep.status})
-        }else{
+            this.setState({ errorMessage: rep.status })
+        } else {
             document.getElementsByClassName('login-form')[0].innerHTML = "<span class='email-sent-span'>Email Sent</span>"
         }
-        
+
     }
 
     handleGoToHome() {
         if (window.location.pathname === "/") {
             this.setState({ showmenu: false })
-            window.scrollTo({top:0,behavior:'smooth'})
+            window.scrollTo({ top: 0, behavior: 'smooth' })
         } else {
             this.setState({ showmenu: false })
             this.props.history.push('/')
@@ -326,9 +327,14 @@ class nav extends React.Component {
         this.props.history.push('/createpost')
     }
 
-    handleLoadEdit(){
+    handleLoadEdit() {
         this.setState({ showmenu: false })
         this.props.history.push('/editpost')
+    }
+    handleSearchReturn(e) {
+        const stype = e.target.getAttribute("s")
+        this.props.handleChangeSearchType(stype)
+        document.getElementById("search-input").placeholder = stype.slice(0, 1).toUpperCase() + stype.slice(1, stype.length)
     }
     render() {
         return (
@@ -337,7 +343,15 @@ class nav extends React.Component {
                 <div id="nav-container">
                     <button onClick={this.handleGoToHome} className="home-button">Home</button>
                     {window.location.pathname === "/" ?
-                        <input autoComplete="off" placeholder="Search" spellCheck="false" className="search-input" id="search-input" onChange={this.handleSearch}></input>
+                        <div className="dropdown-search">
+                            <input autoComplete="off" placeholder="Search" spellCheck="false" className="search-input" id="search-input"></input>
+                            <div id="search-menu-type" className="dropdown-search-content">
+                                <button className="search-buttons" s="title" onClick={this.handleSearchReturn}>Search By Title</button>
+                                <button className="search-buttons" s="author" onClick={this.handleSearchReturn}>Search By Author</button>
+                                <button className="search-buttons" s="topic" onClick={this.handleSearchReturn}>Search By Topic</button>
+                                <button className="search-buttons" s="content" onClick={this.handleSearchReturn}>Search By Content</button>
+                            </div>
+                        </div>
                         : null}
 
                     {this.state.weather ?
@@ -376,16 +390,16 @@ class nav extends React.Component {
                                             <li >
                                                 <button className="dropdown-button" id="displaymode" onClick={this.handleDisplayMode}> Topic Mode</button>
                                             </li>}
-                                        {this.state.admin ?
-                                            <>
-                                                <li>
-                                                    <button onClick={this.handleLoadCreate}>Create Post</button>
-                                                </li>
-                                                <li>
-                                                    <button onClick={this.handleLoadEdit}>Edit Post</button>
-                                                </li>
-                                            </>
-                                            : null}
+
+
+                                        <li>
+                                            <button onClick={this.handleLoadCreate}>Create Post</button>
+                                        </li>
+                                        <li>
+                                            <button onClick={this.handleLoadEdit}>Edit Post</button>
+                                        </li>
+
+
 
                                         <li>
                                             <button onClick={this.handleAccount}>Account</button>

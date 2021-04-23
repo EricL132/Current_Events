@@ -35,6 +35,13 @@ const articlesSchema = new mongoose.Schema({
     },
     comments:{
         type:Array
+    },
+    userID:{
+        type:String,
+        required:true
+    },
+    editDate:{
+        type:String
     }
 })
 // newsapi ad70d5a6b15a41be91901d72899fef58 
