@@ -1,0 +1,117 @@
+
+
+
+
+
+.edit-input {
+    max-width: 200px;
+    font-size: 1.1rem;
+    padding: .7rem;
+    width: 90%;
+    margin: .5rem;
+    padding-left: .8rem;
+    background-color: var(--input-color);
+    color: var(--text-color-white);
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--text-color-black);
+    border-radius: 5px;
+}
+
+
+.edit-input::placeholder{
+    color: var(--text-color);
+}
+
+#search-inputs-container{
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: -1rem;
+}
+
+#edit-articles-container{
+    margin-top: 14.5rem;
+}
+
+.edit-page-container{
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+#edit-articles-container #article-container {
+    margin: 2rem;
+    width: 500px;
+    height: 150px;
+    background-color: var(--lighter-background);
+    color: var(--text-color-white);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+
+#edit-articles-container #article-container img{
+    width: 130px;
+    height: 130px;
+    margin-left: 1rem;
+}
+
+#article-info-container{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin: 1rem;
+}
+
+#edit-search{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    top: 8rem;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+
+
+#edit-search-container{
+   
+    width: 500px;
+    display: flex;
+    flex-wrap: wrap;
+    background: var(--lighter-background);
+    justify-content: center;
+    border-radius: 5px;
+    padding-bottom: 1rem;
+    position: absolute;
+    
+}
+#selected-item-info-container{
+    width: 600px;
+    height: 800px;
+    background: white;
+
+}
+
+#article-info-container span{
+    margin: .15rem;
+}
+
+#selected-item-change-container{
+    width: 600px;
+    height: 800px;
+    background: white;
+
+}
+
+#selected-edit-container{
+    width: 1300px;
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 4rem;
+    position: fixed;
+}

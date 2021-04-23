@@ -34,7 +34,6 @@ class createpost extends React.Component {
     async checkIfAdmin() {
         await this.checkAccess();
         const tokenInfo = await this.jwtDecode()
-        console.log(tokenInfo)
         this.setState({tokenInfo:tokenInfo})
     }
 
@@ -98,7 +97,7 @@ class createpost extends React.Component {
                                         vid: video,
                                         topic: topic,
                                         backupvid: backupvid,
-                                        description: information
+                                        content: information
                                     })
                                 }).then((res)=>{
                                     if(!res.ok) return res.json()
@@ -126,7 +125,7 @@ class createpost extends React.Component {
                                     vid: video,
                                     topic: topic,
                                     backupvid: "",
-                                    description: information
+                                    content: information
                                 })
                             }).then((res)=>{
                                 if(!res.ok) return res.json()

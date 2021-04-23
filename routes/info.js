@@ -153,8 +153,14 @@ router.post('/createarticle', async (req, res) => {
 //Function to check if user info
 async function checkLogin(req) {
     const checkadmin = await fetch(`http://${req.headers.host}/user/account/access`, { method: 'GET', headers: { 'cookie': 'jwt=' + req.cookies.jwt, 'access-token': 'none' } })
-    var decoded = jwt_decode(checkadmin.headers.get('access-token'));
-    return decoded
+    try{
+        var decoded = jwt_decode(checkadmin.headers.get('access-token'));
+        return decoded
+    }catch(err){
+        return false
+    }
+    
+    
 }
 
 //Delete all files from google drive
@@ -232,6 +238,17 @@ router.post('/editpost', async (req, res) => {
     articleToEdit.editDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
     await articleToEdit.save()
     return res.status(200).end()
+
+})
+
+
+router.get('/myarticles',async(req,res)=>{
+    const userInfo = await checkLogin(req)
+    if(!userInfo) return res.status(403).send({"status":"Unauthorized"})
+    const findUser = await user.findOne({email:userInfo.email})
+    if(!findUser) return res.status(400).send({"status":"Unable to find user"})
+    const articles = await articlesSchema.find({userID:findUser._id})
+    return res.status(200).send({articles:articles})
 
 })
 module.exports = router
