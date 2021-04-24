@@ -16,16 +16,12 @@
     align-items: center;
     flex-direction: column;
     background-color: transparent;
-    min-width: 850px;
-   
-
 }
 
 .post-input {
-    width: 350px;
+    width: 90%;
     font-size: 1.1rem;
     padding: .7rem;
-    width: 90%;
     margin-top: 1rem;
     padding-left: .8rem;
     background-color: var(--input-color);
@@ -39,8 +35,8 @@
 .post-input::placeholder{
     color: var(--text-color);
 }
-#post-info{
-    min-height: 25rem;
+.post-info{
+    height: 25rem;
     padding-bottom: -1rem;
     resize: none;
    

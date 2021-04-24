@@ -48,7 +48,6 @@ class article extends React.Component {
         }
     }
     async handleError() {
-        console.log(this.state.article)
         const res = await fetch(`https://www.youtube.com/oembed?url=${this.state.article.vid}&format=json`)
         if (res.status !== 200) {
             this.setState({ showBackUpVid: true })
@@ -59,7 +58,6 @@ class article extends React.Component {
         const comment = document.getElementById('commenttext').value
         const res = await fetch('/info/addComment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ comment: comment, article: this.state.article }) })
         document.getElementById('commenttext').value = ""
-        console.log(res.status)
         if (res.status === 200) {
             if (this.state.article.comments) {
                 this.state.article.comments.push({ name: this.state.loggedInName, comment: comment })

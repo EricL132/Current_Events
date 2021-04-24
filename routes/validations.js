@@ -109,8 +109,24 @@ const changepassValidation = (data)=>{
     return schema.validate(data)
 }
 
+const editPostValidation = (data)=>{
+    const schema = Joi.object({
+        "": Joi.string(),
+        title: Joi.string().allow('').required(),
+        author: Joi.string().allow('').required(),
+        topic: Joi.string().allow('').required(),
+        vid: Joi.string().allow('').required(),
+        urlToImage: Joi.string().allow('').required(),
+        content: Joi.string().allow('').required(),
+        article: Joi.string().required(),
+        backupvid: Joi.string().allow('').required(),
+    })
+    return schema.validate(data)
+}
+
 module.exports.registerValidation = registerValidation
 module.exports.loginValidation = loginValidation
 module.exports.resetpassValidation = resetpassValidation
 module.exports.resetpassConfirmValidation = resetpassConfirmValidation
 module.exports.changepassValidation = changepassValidation
+module.exports.editPostValidation = editPostValidation

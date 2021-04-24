@@ -162,7 +162,7 @@ class createpost extends React.Component {
         return (
             <div className="create-page-container">
                 <div className="create-middle-container">
-                    <div className="inputfield-container">
+                    <div className="inputfield-container" style={{width:"700px"}}>
                         <input autoComplete="off" spellCheck={false} id="post-title" className="post-input" placeholder="Title"></input>
                         <input autoComplete="off" spellCheck={false} id="post-author" className="post-input" placeholder="Author"></input>
                         <input autoComplete="off" spellCheck={false} id="post-topic" className="post-input" placeholder="Topic"></input>
@@ -175,7 +175,7 @@ class createpost extends React.Component {
                             </div>
                         </div>
                         <input autoComplete="off" spellCheck={false} id="post-video" className="post-input" placeholder="Video Link"></input>
-                        <textarea autoComplete="off" spellCheck={false} id="post-info" className="post-input" placeholder="Information"></textarea>
+                        <textarea autoComplete="off" spellCheck={false}  className="post-input post-info" placeholder="Information"></textarea>
                         <span id="error-Message">{this.state.errorMessage}</span>
                         <button onClick={this.handleCreatePost} className="submitcreate"><span className="loading-span">Add Article</span></button>
                     </div>

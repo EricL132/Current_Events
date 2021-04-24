@@ -1,19 +1,24 @@
 import React from 'react'
 import './editpost.css'
+import Editbox from './editbox'
 
 let continueInterval;
 class editpost extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            accessToken: "none", loggedIn: true, errorMessage: "", articleCreated: false, myArticles: [], searchArticles: []
+            accessToken: "none", loggedIn: true, errorMessage: "", articleCreated: false, myArticles: [], searchArticles: [], selected: false, selectedItem: "",
+            searchFields: {
+                searchtitle: "",
+                searchauthor: "",
+                searchtopic: "",
+                searchcontent: ""
+            }
         }
         this.checkIfAdmin = this.checkIfAdmin.bind(this)
-        this.handleEditPost = this.handleEditPost.bind(this)
-        this.handleFileInput = this.handleFileInput.bind(this)
         this.getArticles = this.getArticles.bind(this)
         this.handleSelectItem = this.handleSelectItem.bind(this)
-
+        this.handleSearch = this.handleSearch.bind(this)
     }
 
     componentDidMount() {
@@ -24,11 +29,9 @@ class editpost extends React.Component {
         fetch('/info/myarticles').then((res) => {
             return res.json()
         }).then((data) => {
-            console.log(data)
             if (data.articles) {
                 this.setState({ myArticles: data.articles })
                 this.setState({ searchArticles: data.articles })
-                console.log(data.articles)
             }
 
         })
@@ -41,20 +44,6 @@ class editpost extends React.Component {
             this.props.history.push('/')
         }
         this.setState({ pageLoaded: true })
-        document.getElementById("file-input").addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.target.value = null
-        })
-
-        document.getElementById("file-input").addEventListener('change', async (e) => {
-            const file = document.getElementById("file-input").files[0]
-            const form = new FormData()
-            form.append('file', file)
-            await fetch('/info/saveimage', { method: "POST", body: form }).then(async (res) => {
-                const resInfo = await res.json()
-                document.getElementById("post-image").value = `https://drive.google.com/uc?id=${resInfo.imagelink}`
-            })
-        })
 
     }
 
@@ -75,166 +64,109 @@ class editpost extends React.Component {
         }
     }
 
-    async handleEditPost() {
-        this.setState({ errorMessage: "" })
-        if (!this.state.articleCreated) {
-            const exacttitle = document.getElementById('post-exact-title').value
-            const title = document.getElementById('post-title').value
-            const author = document.getElementById('post-author').value
-            const image = document.getElementById('post-image').value
-            const video = document.getElementById('post-video').value
-            const information = document.getElementById('post-info').value
-            if (exacttitle !== "") {
-                this.setState({ articleCreated: true })
-                const loadingSpan = document.getElementsByClassName("loading-span")[0]
-                loadingSpan.innerHTML = ""
-                loadingSpan.classList += " loading"
-                if (!image.includes("https://drive.google.com/uc?id=") && image !== "") {
-                    await fetch(image).then(async (res) => {
-                        const blob = await res.blob()
-                        const file = new File([blob], "image.png", { type: blob.type })
-                        let form = new FormData();
-                        form.append("file", file)
-                        await fetch('/info/saveimage', { method: "POST", body: form }).then(async (res) => {
-                            const resInfo = await res.json()
-                            document.getElementById("post-image").value = `https://drive.google.com/uc?id=${resInfo.imagelink}`
-                        })
-                    })
+    handleSelectItem(e) {
+        document.getElementById("edit-search").style.left = "0"
+        this.setState({ selected: true })
+        console.log(e.currentTarget.getAttribute("item"))
+        this.setState({ selectedItem: e.currentTarget.getAttribute("item") })
+    }
+
+
+    handleSearch(e) {
+        const { name, value } = e.target
+        console.log(e.target)
+        this.state.searchFields[name] = value
+        let result = this.state.searchArticles
+        for (var [key, keyvalue] of Object.entries(this.state.searchFields)) {
+            if (keyvalue !== "") {
+                keyvalue = keyvalue.toLowerCase()
+                switch (key) {
+                    case "searchtitle":
+                        key = "title"
+                        break;
+                    case "searchtopic":
+                        key = "topic"
+                        break;
+                    case "searchauthor":
+                        key = "author"
+                        break;
+                    case "searchcontent":
+                        key = "content"
+                        break;
+                    default:
+                        break;
                 }
-
-
-                continueInterval = setInterval(async () => {
-                    if (video !== "") {
-                        if (document.getElementById('post-image').value.includes("https://drive.google.com/uc?id=") || image === "") {
-                            clearInterval(continueInterval)
-
-
-                            const link = video.split('=')[1]
-                            const res = await fetch('/info/createbackupvid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link: link }) })
-                            const reslink = await res.json()
-                            console.log(reslink)
-                            const backupvid = 'https://drive.google.com/file/d/' + reslink.link + '/preview'
-                            await fetch('/info/editpost', {
-                                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
-                                    exacttitle: exacttitle,
-                                    title: title,
-                                    author: author,
-                                    urlToImage: image,
-                                    vid: video,
-                                    backupvid: backupvid,
-                                    description: information
-                                })
-                            }).then(async (res) => {
-                                if (res.status !== 200) {
-                                    const erro = await res.json()
-                                    this.setState({ errorMessage: erro.errormessage })
-                                    this.setState({ articleCreated: false })
-                                    const loadingSpan = document.getElementsByClassName("loading-span")[0]
-                                    loadingSpan.innerHTML = "Edit Article"
-                                    loadingSpan.classList += "loading-span"
-                                } else {
-                                    this.props.history.push('/')
-                                }
-                            })
-
-                        }
-                    } else {
-                        clearInterval(continueInterval)
-                        await fetch('/info/editpost', {
-                            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
-                                exacttitle: exacttitle,
-                                title: title,
-                                author: author,
-                                urlToImage: image,
-                                vid: "",
-                                backupvid: "",
-                                description: information
-                            })
-                        }).then(async (res) => {
-                            if (res.status !== 200) {
-                                const erro = await res.json()
-                                this.setState({ errorMessage: erro.errormessage })
-                                this.setState({ articleCreated: false })
-                                const loadingSpan = document.getElementsByClassName("loading-span")[0]
-                                loadingSpan.innerHTML = "Edit Article"
-                                loadingSpan.classList += "loading-span"
-                            } else {
-                                this.props.history.push('/')
-                            }
-                        })
-
+                result = result.filter((article) => {
+                    if (article[key]) {
+                        const item = article[key].toLowerCase()
+                        return item.includes(keyvalue)
                     }
-
-
-                }, 3000)
-
-
-
-            } else {
-                this.setState({ errorMessage: "Invalid Title" })
+                })
             }
-        } else {
-            this.setState({ errorMessage: "Performing changes already (If its over 30 seconds refresh page and try again)" })
         }
-
-
-    }
-
-    handleSelectItem() {
-        document.getElementById("edit-search").style.left = "84%"
-    }
-    handleFileInput() {
-
-        document.getElementById("file-input").click();
+        this.setState({ myArticles: result })
 
     }
+
     render() {
         return (
             <div className="edit-page-container">
-                {/* <div id="selected-edit-container">
-                    <div id="selected-item-info-container">
+                <div id="selected-edit-container">
+                    {this.state.selected ?
+                        <div id="inside">
+                            <div id="inside1">
 
-                    </div>
-                    <div id="selected-item-change-container">
+                                <Editbox props={this.props} isDisplay={true} selectedItem={this.state.myArticles[this.state.selectedItem]}></Editbox>
 
-                    </div>
-                </div> */}
 
-                <div id="edit-search">
-                    <div id="edit-search-container">
-                        <h1 style={{ color: "var(--text-color)" }}>Search For Spcific Article</h1>
-                        <div id="search-inputs-container">
-                            <input className="edit-input" placeholder="Title"></input>
-                            <input className="edit-input" placeholder="Author"></input>
-                            <input className="edit-input" placeholder="Topic"></input>
-                            <input className="edit-input" placeholder="Content"></input>
+                                <Editbox props={this.props} selectedItem={this.state.myArticles[this.state.selectedItem]}></Editbox>
+
+                            </div>
+
 
                         </div>
-                        <button className="default-blue-button">Search</button>
-                    </div>
-                    {this.state.myArticles.length > 0 ?
-                        <div id="edit-articles-container">
-                            {this.state.myArticles.map((article,i)=>{
-                                    return <div id="article-container" key={i} onClick={this.handleSelectItem}>
-                            
-                                    <img src={article.urlToImage}></img>
-                                    <div id="article-info-container">
-                                        <span>Title: {article.title}</span>
-                                        <span>Topic: {article.topic}</span>
-                                        <span>Author: {article.author}</span>
-                                        <span>Published: {article.publishedAt}</span>
-                                        <span style={{whiteSpace:"nowrap"}}>Content: {article.content}</span>
+                        : null}
+
+                    <div id="edit-search">
+                        <div id="edit-search-container">
+                            <h1 style={{ color: "var(--text-color)" }}>Search For Spcific Article</h1>
+                            <form autoComplete="off" spellCheck={false} id="search-inputs-container" onChange={this.handleSearch}>
+                                <input className="edit-input" name="searchtitle" placeholder="Title"></input>
+                                <input className="edit-input" name="searchauthor" placeholder="Author"></input>
+                                <input className="edit-input" name="searchtopic" placeholder="Topic"></input>
+                                <input className="edit-input" name="searchcontent" placeholder="Content"></input>
+
+                            </form>
+
+                        </div>
+                        {this.state.myArticles.length > 0 ?
+                            <div id="edit-articles-container">
+                                {this.state.myArticles.map((article, i) => {
+                                    return <div id="article-container" key={i} item={i} onClick={this.handleSelectItem}>
+
+                                        <img src={article.urlToImage}></img>
+                                        <div id="article-info-container">
+                                            <span>Title: {article.title}</span>
+                                            <span>Topic: {article.topic}</span>
+                                            <span>Author: {article.author}</span>
+                                            <span>Published: {article.publishedAt}</span>
+                                            <span style={{ whiteSpace: "nowrap" }}>Content: {article.content}</span>
+                                        </div>
+
                                     </div>
-    
-                                </div>
                                 })
 
                                 }
-                        </div>
 
-                        : null}
 
+                            </div>
+
+                            : <div id="no-articles"><span>You dont have any articles</span></div>}
+
+                    </div>
                 </div>
+
+
 
             </div>
 

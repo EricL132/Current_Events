@@ -201,7 +201,6 @@ class nav extends React.Component {
 
     async handleDarkMode(item) {
         if (this.state.darkmode) {
-            console.log('vxc')
             const navbar = document.getElementById('nav-container')
 
             const loginB = navbar.children[0].children[0]

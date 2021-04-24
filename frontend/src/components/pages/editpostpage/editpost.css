@@ -1,8 +1,3 @@
-
-
-
-
-
 .edit-input {
     max-width: 200px;
     font-size: 1.1rem;
@@ -18,26 +13,26 @@
     border-radius: 5px;
 }
 
-
-.edit-input::placeholder{
+.edit-input::placeholder {
     color: var(--text-color);
 }
 
-#search-inputs-container{
+#search-inputs-container {
     justify-content: center;
     display: flex;
     flex-wrap: wrap;
     margin-top: -1rem;
 }
-
-#edit-articles-container{
+#no-articles{
+    z-index: 1;
+    color: var(--text-color-white);
+    margin-top: 20rem;
+}
+#edit-articles-container {
     margin-top: 14.5rem;
 }
 
-.edit-page-container{
-    height: 100vh;
-    display: flex;
-    align-items: center;
+.edit-page-container {
     position: relative;
 }
 
@@ -50,36 +45,32 @@
     display: flex;
     align-items: center;
     overflow: hidden;
+    cursor: pointer;
 }
 
-
-#edit-articles-container #article-container img{
+#edit-articles-container #article-container img {
     width: 130px;
     height: 130px;
     margin-left: 1rem;
 }
 
-#article-info-container{
+#article-info-container {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     margin: 1rem;
 }
 
-#edit-search{
+#edit-search {
     display: flex;
     align-items: center;
     flex-direction: column;
-    position: absolute;
-    top: 8rem;
-    left: 50%;
-    transform: translateX(-50%);
+    margin-left: 2rem;
+    position: relative;
+    
 }
 
-
-
-#edit-search-container{
-   
+#edit-search-container {
     width: 500px;
     display: flex;
     flex-wrap: wrap;
@@ -88,30 +79,28 @@
     border-radius: 5px;
     padding-bottom: 1rem;
     position: absolute;
-    
-}
-#selected-item-info-container{
-    width: 600px;
-    height: 800px;
-    background: white;
-
 }
 
-#article-info-container span{
+#article-info-container span {
     margin: .15rem;
 }
 
-#selected-item-change-container{
-    width: 600px;
-    height: 800px;
-    background: white;
-
-}
-
-#selected-edit-container{
-    width: 1300px;
+#selected-edit-container {
+    width: 100%;
     display: flex;
     justify-content: space-evenly;
-    margin-top: 4rem;
+    margin-top: 5.5rem;
+    position: relative;
+}
+
+#selected-edit-container #inside {
+    min-width: 1200px;
+    position: relative;
+}
+
+#inside1 {
+    display: flex;
+    margin-top: -1.1rem;
+    justify-content: space-evenly;
     position: fixed;
 }

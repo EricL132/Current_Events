@@ -9,6 +9,7 @@ const { google } = require('googleapis');
 const path = require('path');
 const multer = require('multer');
 const user = require('../models/user');
+const {editPostValidation} = require('./validations')
 
 const multerstorage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -223,23 +224,7 @@ router.post('/saveimage', upload.single("file"), async (req, res) => {
 
 
 
-router.post('/editpost', async (req, res) => {
-    const userInfo = await checkLogin(req)
-    if (userInfo.admin === false) return res.status(400).send({ errorMessage: "Not Admin" })
 
-    const articleToEdit = await articlesSchema.findOne({ title: req.body.exacttitle })
-    if (!articleToEdit) return res.status(400).send({ errormessage: "Article not found" })
-    for (const [key, value] of Object.entries(req.body)) {
-        if (value != "") {
-            articleToEdit[key] = value;
-        }
-    }
-    const date = new Date()
-    articleToEdit.editDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
-    await articleToEdit.save()
-    return res.status(200).end()
-
-})
 
 
 router.get('/myarticles',async(req,res)=>{
@@ -247,8 +232,42 @@ router.get('/myarticles',async(req,res)=>{
     if(!userInfo) return res.status(403).send({"status":"Unauthorized"})
     const findUser = await user.findOne({email:userInfo.email})
     if(!findUser) return res.status(400).send({"status":"Unable to find user"})
-    const articles = await articlesSchema.find({userID:findUser._id})
+    let articles = []
+    if(findUser.admin){
+         articles = await articlesSchema.find({})
+    }else{
+         articles = await articlesSchema.find({userID:findUser._id})
+
+    }
     return res.status(200).send({articles:articles})
 
 })
+
+
+
+router.post('/editpost', async (req, res) => {
+    const form = req.body.formInfo
+    const {error}  = editPostValidation(form)
+    if(error) return res.status(400).send({"status":"Invalid form"})
+    const userInfo = await checkLogin(req)
+    const articleToEdit = await articlesSchema.findOne({ _id: form.article })
+    if (!articleToEdit) return res.status(400).send({"status":"Unable to find article"})
+    const findUser = await user.findOne({_id:articleToEdit.userID})
+    if(!userInfo.admin && !userInfo.subadmin){
+        if (!findUser) return res.status(400).send({"status":"Unauthorized"})
+    }
+    for (const [key, value] of Object.entries(form)) {
+        if (value != "") {
+            articleToEdit[key] = value;
+        }
+    }
+    const date = new Date()
+    articleToEdit.editDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
+    await articleToEdit.save() 
+    return res.status(200).end()
+
+})
+
 module.exports = router
+
+

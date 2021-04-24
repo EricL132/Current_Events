@@ -1,0 +1,6 @@
+#selected-item-info-container{
+    width: 600px;
+    height: 800px;
+    background: var(--lighter-background); 
+    margin: 2rem 1rem;
+}
