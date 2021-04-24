@@ -335,6 +335,7 @@ class nav extends React.Component {
         this.props.handleChangeSearchType(stype)
         document.getElementById("search-input").placeholder = stype.slice(0, 1).toUpperCase() + stype.slice(1, stype.length)
     }
+
     render() {
         return (
             <>
@@ -359,10 +360,10 @@ class nav extends React.Component {
                         </div>
                         : null}
                     {!this.state.loggedIn ?
-                        <div className="nav-dropdown-container">
-
-                            <button onClick={this.handleShowLogin} id="open-login-button"></button>
+                        <div className="nav-dropdown-container">{/* <i class="fas fa-grip-lines"></i> */}
+                            <button onClick={this.props.handleDisplayMode} className="grid-icon-login" stlye={{marginRight:"2rem"}}><i class="fas fa-th"></i></button>
                             <button onClick={this.handleDarkMode} className="moon-icon-login"><i className="far fa-moon"></i></button>
+                            <button onClick={this.handleShowLogin} id="open-login-button"></button>
                         </div>
                         :
 

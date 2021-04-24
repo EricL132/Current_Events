@@ -253,6 +253,8 @@
     border: none;
     cursor: pointer;
     margin-top: 2rem;
+    position: absolute;
+    right: -3.5rem;
 }
 
 .moon-icon-login {
@@ -266,6 +268,22 @@
     color: var(--text-color-white);
     border: none;
     cursor: pointer;
+    margin-top: 2rem;
+}
+
+
+.grid-icon-login {
+    height: 36px;
+    width: 40px;
+    right: 7.2rem;
+    position: absolute;
+    border-radius: 5px;
+    outline: none;
+    background-color: var(--background-color);
+    color: var(--text-color-white);
+    border: none;
+    cursor: pointer;
+    margin-top: 2rem;
 }
 
 #nav-container {

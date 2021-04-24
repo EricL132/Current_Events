@@ -9,7 +9,7 @@ const { google } = require('googleapis');
 const path = require('path');
 const multer = require('multer');
 const user = require('../models/user');
-const {editPostValidation} = require('./validations')
+const {editPostValidation} = require('./validations');
 
 const multerstorage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -250,6 +250,7 @@ router.post('/editpost', async (req, res) => {
     const {error}  = editPostValidation(form)
     if(error) return res.status(400).send({"status":"Invalid form"})
     const userInfo = await checkLogin(req)
+    if(!userInfo) return res.status(403).send({"status":"unauthorized"})
     const articleToEdit = await articlesSchema.findOne({ _id: form.article })
     if (!articleToEdit) return res.status(400).send({"status":"Unable to find article"})
     const findUser = await user.findOne({_id:articleToEdit.userID})
@@ -264,6 +265,23 @@ router.post('/editpost', async (req, res) => {
     const date = new Date()
     articleToEdit.editDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
     await articleToEdit.save() 
+    return res.status(200).end()
+
+})
+
+router.put('/deletepost', async (req, res) => {
+    console.log(req.body)
+    const articleID = req.body.articleID
+    if(!articleID) return res.status(400).send({"status":"Couldn't find article"})
+    const userInfo = await checkLogin(req)
+    if(!userInfo) return res.status(403).send({"status":"unauthorized"})
+    const articleToEdit = await articlesSchema.findOne({ _id: articleID })
+    if (!articleToEdit) return res.status(400).send({"status":"Unable to find article"})
+    const findUser = await user.findOne({_id:articleToEdit.userID})
+    if(!userInfo.admin && !userInfo.subadmin){
+        if (!findUser) return res.status(400).send({"status":"Unauthorized"})
+    }
+    await articleToEdit.delete()
     return res.status(200).end()
 
 })

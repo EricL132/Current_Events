@@ -31,7 +31,8 @@
 
 .topic-title{
     color: var(--text-color-white);
- 
+    font-weight: bold;
+
 }
 
 .topics-container{
@@ -39,7 +40,7 @@
     flex-direction: column;
     overflow: hidden;
     width: 90vw;
-
+    font-weight: bold;
 }
 
 .topic-articles{

@@ -38,7 +38,6 @@ const articlesSchema = new mongoose.Schema({
     },
     userID:{
         type:String,
-        required:true
     },
     editDate:{
         type:String

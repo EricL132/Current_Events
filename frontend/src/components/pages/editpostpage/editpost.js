@@ -2,7 +2,6 @@ import React from 'react'
 import './editpost.css'
 import Editbox from './editbox'
 
-let continueInterval;
 class editpost extends React.Component {
     constructor(props) {
         super(props)
@@ -15,7 +14,6 @@ class editpost extends React.Component {
                 searchcontent: ""
             }
         }
-        this.checkIfAdmin = this.checkIfAdmin.bind(this)
         this.getArticles = this.getArticles.bind(this)
         this.handleSelectItem = this.handleSelectItem.bind(this)
         this.handleSearch = this.handleSearch.bind(this)
@@ -33,23 +31,8 @@ class editpost extends React.Component {
                 this.setState({ myArticles: data.articles })
                 this.setState({ searchArticles: data.articles })
             }
-
+            this.setState({pageloaded:true})
         })
-    }
-
-    async checkIfAdmin() {
-        await this.checkAccess();
-        const tokenInfo = await this.jwtDecode()
-        if (tokenInfo.admin !== true) {
-            this.props.history.push('/')
-        }
-        this.setState({ pageLoaded: true })
-
-    }
-
-    async jwtDecode() {
-
-        return JSON.parse(window.atob(this.state.accessToken.split('.')[1]));
     }
     async checkAccess() {
         if (this.state.loggedIn) {
@@ -161,7 +144,11 @@ class editpost extends React.Component {
 
                             </div>
 
-                            : <div id="no-articles"><span>You dont have any articles</span></div>}
+                            :
+                            <>
+                                {this.state.pageloaded ? <div id="no-articles"><span>You dont have any articles</span></div> : null}
+                            </>
+                        }
 
                     </div>
                 </div>

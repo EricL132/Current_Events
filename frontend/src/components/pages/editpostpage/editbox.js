@@ -8,16 +8,16 @@ export default function Editbox(props) {
         author: "",
         topic: "",
         vid: "",
-        backupvid:"",
+        backupvid: "",
         urlToImage: "",
         content: "",
-        article:props.selectedItem._id
+        article: props.selectedItem._id
     })
     const [displayForm, setdisplayForm] = useState({
 
     })
     const [articleCreated, setarticleCreated] = useState(false)
-    const [errorMessage,seterrorMessage] = useState("")
+    const [errorMessage, seterrorMessage] = useState("")
 
     useEffect(() => {
         document.getElementById("file-input").addEventListener('click', (e) => {
@@ -26,15 +26,15 @@ export default function Editbox(props) {
         })
 
     })
-    useEffect(()=>{
-        if(props.isDisplay){
+    useEffect(() => {
+        if (props.isDisplay) {
             setdisplayForm(props.selectedItem)
             console.log(displayForm)
         }
-        
-    },[props])
 
-    function handleFileChange(){
+    }, [props])
+
+    function handleFileChange() {
         const file = document.getElementById("file-input").files[0]
         const form = new FormData()
         form.append('file', file)
@@ -43,7 +43,7 @@ export default function Editbox(props) {
         fetch('/info/saveimage', { method: "POST", body: form }).then(async (res) => {
             const resInfo = await res.json()
             document.getElementById("post-image").value = `https://drive.google.com/uc?id=${resInfo.imagelink}`
-            setFormInfo((prev)=>({...prev,urlToImage:`https://drive.google.com/uc?id=${resInfo.imagelink}`}))
+            setFormInfo((prev) => ({ ...prev, urlToImage: `https://drive.google.com/uc?id=${resInfo.imagelink}` }))
             setarticleCreated(false)
             seterrorMessage("")
 
@@ -53,7 +53,7 @@ export default function Editbox(props) {
         e.preventDefault()
         const { name, value } = e.target
         setFormInfo(prev => ({ ...prev, [name]: value }))
-    
+
     }
     function handleEditPost(e) {
         e.preventDefault()
@@ -63,7 +63,7 @@ export default function Editbox(props) {
             loadingSpan.innerHTML = ""
             loadingSpan.classList += " loading"
             if (!formInfo.urlToImage.includes("https://drive.google.com/uc?id=") && formInfo.urlToImage !== "") {
-                 fetch(formInfo.urlToImage).then(async (res) => {
+                fetch(formInfo.urlToImage).then(async (res) => {
                     const blob = await res.blob()
                     const file = new File([blob], "image.png", { type: blob.type })
                     let form = new FormData();
@@ -71,7 +71,7 @@ export default function Editbox(props) {
                     await fetch('/info/saveimage', { method: "POST", body: form }).then(async (res) => {
                         const resInfo = await res.json()
                         document.getElementById("post-image").value = `https://drive.google.com/uc?id=${resInfo.imagelink}`
-                        setFormInfo((prev)=>({...prev,urlToImage:`https://drive.google.com/uc?id=${resInfo.imagelink}`}))
+                        setFormInfo((prev) => ({ ...prev, urlToImage: `https://drive.google.com/uc?id=${resInfo.imagelink}` }))
 
                     })
                 })
@@ -84,7 +84,7 @@ export default function Editbox(props) {
                         const res = await fetch('/info/createbackupvid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link: link }) })
                         const reslink = await res.json()
 
-                        setFormInfo((prev)=>({...prev,backupvid:'https://drive.google.com/file/d/' + reslink.link + '/preview'}))
+                        setFormInfo((prev) => ({ ...prev, backupvid: 'https://drive.google.com/file/d/' + reslink.link + '/preview' }))
                         await fetch('/info/editpost', {
                             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
                                 formInfo
@@ -135,6 +135,14 @@ export default function Editbox(props) {
         document.getElementById("file-input").click();
 
     }
+
+    function handleDeletePost(){
+        fetch("/info/deletepost",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({articleID:formInfo.article})}).then(async (res)=>{
+            if(res.ok) return props.props.history.push("/")
+            const errorMess = await res.json()
+            seterrorMessage(errorMess)
+        })
+    }
     return (
         <>
             {props.isDisplay ?
@@ -153,7 +161,6 @@ export default function Editbox(props) {
                 </div>
 
                 : <div id="selected-item-info-container">
-
                     <h4 style={{ marginTop: "2rem", color: "var(--text-color-white)", textAlign: "center" }}>Edit fields, Leave empty to keep the same </h4>
                     <form id="info-form-edit" className="inputfield-container" style={{ marginTop: "-1.5rem" }} onSubmit={handleEditPost} onChange={changeInput}>
                         <input autoComplete="off" spellCheck={false} id="post-title" name="title" className="post-input" placeholder="Title"></input>
@@ -169,8 +176,14 @@ export default function Editbox(props) {
                         </div>
                         <input autoComplete="off" spellCheck={false} id="post-video" name="video" className="post-input" placeholder="Video Link"></input>
                         <textarea autoComplete="off" spellCheck={false} className="post-input post-info" name="content" style={{ height: "22rem" }} placeholder="Information"></textarea>
-                        <span id="error-Message"style={{bottom:"1.4rem"}}>{errorMessage}</span>
-                        <button className="submitcreate" style={{ bottom: "1rem" }}><span className="loading-span">Edit</span></button>
+                        <span id="error-Message" style={{ bottom: "1.4rem" }}>{errorMessage}</span>
+                        <div id="submit-buttom-container">
+                            <button className="submitcreate"><span className="loading-span">Edit</span></button>
+                            <button className="submitcreate" type="button" onClick={handleDeletePost}><span >Delete</span></button>
+
+                        </div>
+
+
                     </form>
 
 
