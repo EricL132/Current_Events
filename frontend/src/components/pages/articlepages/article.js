@@ -79,7 +79,7 @@ class article extends React.Component {
                             {this.state.article.vid ?
                                 <>
                                     {!this.state.showBackUpVid && this.state.pageLoaded ?
-                                        <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${this.state.article.vid.split('=')[1]}`} frameBorder="0" allowFullScreen />
+                                        <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${this.state.article.vid.split('=')[1].split("&")[0]}`} frameBorder="0" allowFullScreen />
                                         :
                                         <iframe width="100%" height="100%" src={this.state.article.backupvid} frameBorder="0" allowFullScreen />
 
@@ -93,7 +93,7 @@ class article extends React.Component {
                             <h1 className="article-title">{this.state.article.title}</h1>
                             <h3 className="author-name">{this.state.article.author}, {this.state.article.publishedAt} {this.state.article.editDate?<span style={{opacity:".6",fontSize:".7rem"}}>Last edited: {this.state.article.editDate}</span>:null}</h3>
                             <span className="article-description">{this.state.article.description}</span>
-                            <h4>Read Full Article At: <a href={this.state.article.url} target="_blank" style={{ "textDecoration": "none", "color": "var(--text-color-white)" }}>Link</a></h4>
+                            {this.state.article.url?<h4>Read Full Article At: <a href={this.state.article.url} target="_blank" style={{ "textDecoration": "none", "color": "var(--text-color-white)" }}>Link</a></h4>:null}
                         </div>
                         <div id="comments-container">
                             <h1 id="comment-header">Comments</h1>

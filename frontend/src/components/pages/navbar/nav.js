@@ -26,7 +26,6 @@ class nav extends React.Component {
         this.handleAccount = this.handleAccount.bind(this)
         this.handleDisplayMode = this.handleDisplayMode.bind(this)
         this.handleLoadEdit = this.handleLoadEdit.bind(this)
-        this.handleSearchReturn = this.handleSearchReturn.bind(this)
         this.state = { admin: false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false, modeText: [" Dark Mode"] }
         this.checkForLogin()
     }
@@ -330,11 +329,7 @@ class nav extends React.Component {
         this.setState({ showmenu: false })
         this.props.history.push('/editpost')
     }
-    handleSearchReturn(e) {
-        const stype = e.target.getAttribute("s")
-        this.props.handleChangeSearchType(stype)
-        document.getElementById("search-input").placeholder = stype.slice(0, 1).toUpperCase() + stype.slice(1, stype.length)
-    }
+
 
     render() {
         return (
@@ -346,10 +341,11 @@ class nav extends React.Component {
                         <div className="dropdown-search">
                             <input autoComplete="off" placeholder="Search" spellCheck="false" className="search-input" id="search-input"></input>
                             <div id="search-menu-type" className="dropdown-search-content">
-                                <button className="search-buttons" s="title" onClick={this.handleSearchReturn}>Search By Title</button>
-                                <button className="search-buttons" s="author" onClick={this.handleSearchReturn}>Search By Author</button>
-                                <button className="search-buttons" s="topic" onClick={this.handleSearchReturn}>Search By Topic</button>
-                                <button className="search-buttons" s="content" onClick={this.handleSearchReturn}>Search By Content</button>
+                                <button className="search-buttons" s="search" >Search All</button>
+                                <button className="search-buttons" s="title" >Search By Title</button>
+                                <button className="search-buttons" s="author" >Search By Author</button>
+                                <button className="search-buttons" s="topic" >Search By Topic</button>
+                                <button className="search-buttons" s="content" >Search By Content</button>
                             </div>
                         </div>
                         : null}

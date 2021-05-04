@@ -14,7 +14,7 @@ class App extends React.Component {
   constructor(){
     super()
     this.state = {
-      displaySlide:true,typeOfSearch:"title"
+      displaySlide:true,typeOfSearch:"search"
     }
     this.handleChangeSearchType = this.handleChangeSearchType.bind(this)
   }
@@ -40,7 +40,7 @@ class App extends React.Component {
         
         <Switch>
      
-          <Route path='/'  exact render={(props)=>(<Home {...props} {...this.state}/>)}></Route>
+          <Route path='/'  exact render={(props)=>(<Home {...props} {...this.state} handleChangeSearchType={this.handleChangeSearchType}/>)} ></Route>
           <Route path='/article'>
             <Route path='/:title' component={ArticlePages}></Route>
           </Route>

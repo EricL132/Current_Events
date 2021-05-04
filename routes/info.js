@@ -1,3 +1,4 @@
+const unfurl = require('unfurl.js').unfurl;
 const jwt_decode = require('jwt-decode');
 const router = require('express').Router();
 const articlesSchema = require('../models/articles')
@@ -9,7 +10,28 @@ const { google } = require('googleapis');
 const path = require('path');
 const multer = require('multer');
 const user = require('../models/user');
-const {editPostValidation} = require('./validations');
+const { editPostValidation } = require('./validations');
+const crypto = require('crypto')
+const streamifier = require('streamifier');
+
+//Authentication for Google Console API
+const auth = new google.auth.GoogleAuth({
+    credentials: {
+        client_email: process.env.googleEmail,
+        private_key: process.env.googleKey.replace(/\\n/g, '\n')
+    },
+    scopes: ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive.appdata']
+});
+
+
+
+//Logs into service agent google drive
+const drive = google.drive({
+    version: "v3",
+    auth: auth
+})
+
+/* 
 
 const multerstorage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -19,9 +41,9 @@ const multerstorage = multer.diskStorage({
         cb(null, Date.now() + file.originalname)
     }
 
-})
+}) */
 
-var upload = multer({ storage: multerstorage })
+/* var upload = multer({ storage: multerstorage }) */
 
 //GET route to get all articles
 router.get('/articles', async (req, res) => {
@@ -49,22 +71,9 @@ router.get('/articles', async (req, res) => {
 
 
 
-//Authentication for Google Console API
-const auth = new google.auth.GoogleAuth({
-    credentials: {
-        client_email: process.env.googleEmail,
-        private_key: process.env.googleKey.replace(/\\n/g, '\n')
-    },
-    scopes: ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive.appdata']
-});
 
 
 
-//Logs into service agent google drive
-const drive = google.drive({
-    version: "v3",
-    auth: auth
-})
 
 
 //Saves youtube video to drive
@@ -99,7 +108,7 @@ async function saveToDrive(link) {
 
 
 }
-
+"https://project490.herokuapp.com/createbackupvid"
 
 
 //POST request to save a video to drive
@@ -125,7 +134,7 @@ router.post('/createbackupvid', async (req, res) => {
 router.get('/findarticle', async (req, res) => {
     //Parses query string
     const param = querystring.parse(req._parsedOriginalUrl.query)
-    const article = await articlesSchema.findOne({ title: param.title })
+    const article = await articlesSchema.findOne({ _id: param.id })
     if (!article) return res.status(400).end()
     return res.status(200).send({ article: article })
 })
@@ -134,19 +143,21 @@ router.get('/findarticle', async (req, res) => {
 router.post('/createarticle', async (req, res) => {
     const userInfo = await checkLogin(req)
     if (!userInfo) return res.status(403).send({ "status": "Unauthorized" })
-    const findUser = await user.findOne({email:userInfo.email})
+    const findUser = await user.findOne({ email: userInfo.email })
     const newInfo = req.body
-    const date = new Date()
-    newInfo.userID = findUser._id
-    newInfo.publishedAt = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
-    /*     let checkArticle = await articlesSchema.findOneAndUpdate({ title: req.body.title }, newInfo, { new: true, overwrite: true })
-        if (!checkArticle) { */
-    const newArticle = new articlesSchema(newInfo)
-    await newArticle.save()
-    /*     } */
+    const imageCheck = await fetch(newInfo.urlToImage)
+    if (imageCheck.headers.get("content-type").includes("image")) {
+        const date = new Date()
+        newInfo.userID = findUser._id
+        newInfo.author = findUser.first + " " + findUser.last
+        newInfo.publishedAt = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
+        const newArticle = new articlesSchema(newInfo)
+        await newArticle.save()
+        res.status(200).end()
+    } else {
+        res.status(400).send("Invalid image")
+    }
 
-
-    res.status(200).end()
 
 })
 
@@ -154,14 +165,14 @@ router.post('/createarticle', async (req, res) => {
 //Function to check if user info
 async function checkLogin(req) {
     const checkadmin = await fetch(`http://${req.headers.host}/user/account/access`, { method: 'GET', headers: { 'cookie': 'jwt=' + req.cookies.jwt, 'access-token': 'none' } })
-    try{
+    try {
         var decoded = jwt_decode(checkadmin.headers.get('access-token'));
         return decoded
-    }catch(err){
+    } catch (err) {
         return false
     }
-    
-    
+
+
 }
 
 //Delete all files from google drive
@@ -207,19 +218,35 @@ router.post('/addComment', async (req, res) => {
 })
  */
 
-router.post('/saveimage', upload.single("file"), async (req, res) => {
-    const saveDrive = await drive.files.create({
-        requestBody: {
-            parents: ["11_ChHCDC7ZNM01ZNgNQDZ5A-8qVu9iA3"],
-            name: req.file.filename
-        },
-        media: {
-            mimeType: 'image/png',
-            body: fs.createReadStream(path.join(__dirname, '../upload/' + req.file.filename))
+
+router.post('/saveimage', async (req, res) => {
+
+    fetch(req.query.image).then((res) => res.blob()).then(async (data) => {
+        const arrB = Buffer.from(await data.arrayBuffer())
+        const randomString = Date.now() + crypto.randomBytes(16).toString('hex')
+        try {
+            const saveDrive = await drive.files.create({
+                requestBody: {
+                    parents: ["11_ChHCDC7ZNM01ZNgNQDZ5A-8qVu9iA3"],
+                    name: randomString
+                },
+                media: {
+                    mimeType: 'image/png',
+                    body: streamifier.createReadStream(arrB)
+                }
+            })
+            res.send({ imagelink: saveDrive.data.id })
+        } catch (err) {
+            console.log(err)
+            res.status(400).send({ "status": "Failed to save image" })
         }
+
+
+
     })
-    fs.unlink(path.join(__dirname, '../upload/' + req.file.filename), (err) => { })
-    res.send({ imagelink: saveDrive.data.id })
+
+
+
 })
 
 
@@ -227,19 +254,19 @@ router.post('/saveimage', upload.single("file"), async (req, res) => {
 
 
 
-router.get('/myarticles',async(req,res)=>{
+router.get('/myarticles', async (req, res) => {
     const userInfo = await checkLogin(req)
-    if(!userInfo) return res.status(403).send({"status":"Unauthorized"})
-    const findUser = await user.findOne({email:userInfo.email})
-    if(!findUser) return res.status(400).send({"status":"Unable to find user"})
+    if (!userInfo) return res.status(403).send({ "status": "Unauthorized" })
+    const findUser = await user.findOne({ email: userInfo.email })
+    if (!findUser) return res.status(400).send({ "status": "Unable to find user" })
     let articles = []
-    if(findUser.admin){
-         articles = await articlesSchema.find({})
-    }else{
-         articles = await articlesSchema.find({userID:findUser._id})
+    if (findUser.admin) {
+        articles = await articlesSchema.find({})
+    } else {
+        articles = await articlesSchema.find({ userID: findUser._id })
 
     }
-    return res.status(200).send({articles:articles})
+    return res.status(200).send({ articles: articles })
 
 })
 
@@ -247,15 +274,15 @@ router.get('/myarticles',async(req,res)=>{
 
 router.post('/editpost', async (req, res) => {
     const form = req.body.formInfo
-    const {error}  = editPostValidation(form)
-    if(error) return res.status(400).send({"status":"Invalid form"})
+    const { error } = editPostValidation(form)
+    if (error) return res.status(400).send({ "status": "Invalid form" })
     const userInfo = await checkLogin(req)
-    if(!userInfo) return res.status(403).send({"status":"unauthorized"})
+    if (!userInfo) return res.status(403).send({ "status": "unauthorized" })
     const articleToEdit = await articlesSchema.findOne({ _id: form.article })
-    if (!articleToEdit) return res.status(400).send({"status":"Unable to find article"})
-    const findUser = await user.findOne({_id:articleToEdit.userID})
-    if(!userInfo.admin && !userInfo.subadmin){
-        if (!findUser) return res.status(400).send({"status":"Unauthorized"})
+    if (!articleToEdit) return res.status(400).send({ "status": "Unable to find article" })
+    const findUser = await user.findOne({ _id: articleToEdit.userID })
+    if (!userInfo.admin && !userInfo.subadmin) {
+        if (!findUser) return res.status(400).send({ "status": "Unauthorized" })
     }
     for (const [key, value] of Object.entries(form)) {
         if (value != "") {
@@ -264,7 +291,7 @@ router.post('/editpost', async (req, res) => {
     }
     const date = new Date()
     articleToEdit.editDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
-    await articleToEdit.save() 
+    await articleToEdit.save()
     return res.status(200).end()
 
 })
@@ -272,18 +299,23 @@ router.post('/editpost', async (req, res) => {
 router.put('/deletepost', async (req, res) => {
     console.log(req.body)
     const articleID = req.body.articleID
-    if(!articleID) return res.status(400).send({"status":"Couldn't find article"})
+    if (!articleID) return res.status(400).send({ "status": "Couldn't find article" })
     const userInfo = await checkLogin(req)
-    if(!userInfo) return res.status(403).send({"status":"unauthorized"})
+    if (!userInfo) return res.status(403).send({ "status": "unauthorized" })
     const articleToEdit = await articlesSchema.findOne({ _id: articleID })
-    if (!articleToEdit) return res.status(400).send({"status":"Unable to find article"})
-    const findUser = await user.findOne({_id:articleToEdit.userID})
-    if(!userInfo.admin && !userInfo.subadmin){
-        if (!findUser) return res.status(400).send({"status":"Unauthorized"})
+    if (!articleToEdit) return res.status(400).send({ "status": "Unable to find article" })
+    const findUser = await user.findOne({ _id: articleToEdit.userID })
+    if (!userInfo.admin && !userInfo.subadmin) {
+        if (!findUser) return res.status(400).send({ "status": "Unauthorized" })
     }
     await articleToEdit.delete()
     return res.status(200).end()
 
+})
+
+router.get('/siteimage', async (req, res) => {
+    const result = await unfurl(req.query.site)
+    res.send(result)
 })
 
 module.exports = router

@@ -10,10 +10,12 @@ class home extends React.Component {
         this.state = { articles: [], articlesFromSearch: [], columnsize: 1500, boxsize: 280 }
         this.getSettings = this.getSettings.bind(this)
         this.handleRightScroll = this.handleRightScroll.bind(this)
-        
+        this.performSearch = this.performSearch.bind(this)
+        this.handleSearchReturn = this.handleSearchReturn.bind(this)
+        this.handleTextClick = this.handleTextClick.bind(this)
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.getArticles()
     }
 
@@ -21,24 +23,54 @@ class home extends React.Component {
         this.getSettings()
         const searchParam = document.getElementById('search-input')
         searchParam.addEventListener('input', async () => {
-            const typeOf = this.props.typeOfSearch
-            const res = this.state.articlesFromSearch.map((article) => {
-                return article.filter((item) => {
-                    if(item[typeOf]){
+            this.performSearch(searchParam)
+        })
+        document.getElementById("search-menu-type").addEventListener("click", (e) => {
+            this.handleSearchReturn(e)
+        })
+
+    }
+    handleSearchReturn(e) {
+        console.log(e.target)
+        const stype = e.target.getAttribute("s")
+        this.props.handleChangeSearchType(stype)
+        document.getElementById("search-input").placeholder = stype.slice(0, 1).toUpperCase() + stype.slice(1, stype.length)
+        const searchParam = document.getElementById('search-input')
+        this.performSearch(searchParam)
+    }
+    performSearch(searchParam) {
+        const typeOf = this.props.typeOfSearch
+        const res = this.state.articlesFromSearch.map((article) => {
+            return article.filter((item) => {
+                if (typeOf === "search") {
+                    try {
+                        const title = item["title"].toLowerCase()
+                        const author = item["author"].toLowerCase()
+                        const topic = item["topic"].toLowerCase()
+                        const content = item["content"].toLowerCase()
+                        const searchvalue = searchParam.value.toLowerCase()
+                        if (title.includes(searchvalue) || author.includes(searchvalue) || topic.includes(searchvalue) || content.includes(searchvalue)) {
+                            return item
+                        }
+                    } catch (err) {
+
+                    }
+
+                } else {
+                    if (item[typeOf]) {
                         const title = item[typeOf].toLowerCase()
                         const searchvalue = searchParam.value.toLowerCase()
                         if (title.includes(searchvalue)) {
                             return item
                         }
                     }
-                   
+                }
 
-                })
+
+
             })
-            this.setState({ articles: res })
-
         })
-
+        this.setState({ articles: res })
     }
     async getSettings() {
         const columnsize = localStorage.getItem('columnsize')
@@ -89,6 +121,17 @@ class home extends React.Component {
 
 
     }
+
+    handleTextClick(e){
+        if(e.target.nodeName!=="IMG"){
+            if(e.target.classList.contains("home-articles-container")){
+                window.location.href =  e.target.firstChild
+            }else{
+                window.location.href = e.target.previousElementSibling
+            }
+        }
+
+    }
     render() {
         return (
             <div className="page-container">
@@ -109,10 +152,20 @@ class home extends React.Component {
 
                                     <div className="topic-articles">
                                         {articleType.slice(0).reverse().map((article, i) => {
-                                            const queryString = querystring.stringify({ title: article.title })
-                                            return <div key={i} className="home-articles-container" style={{ minWidth: `280px` }}>
-                                                <a href={`/article/?${queryString}`}><img src={article.urlToImage} alt=""></img></a>
-                                                <span>{article.title}</span>
+                                            const queryString = querystring.stringify({ id: article._id })
+                                            return <div key={i} className="home-articles-container" style={{ minWidth: `280px` }} onClick={this.handleTextClick}>
+                                                {article.vid ?
+                                                    <>
+                                                        {article.vid.includes("https://www.youtube.com/watch?v=") ?
+                                                            <a href={`/article/?${queryString}`}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
+                                                            : <a href={article.vid}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
+                                                            
+                                                            }
+
+                                                    </>
+                                                    : <a href={`/article/?${queryString}`}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
+                                                    }
+                                                    <span >{article.title}</span>
                                             </div>
                                         })
                                         }
@@ -131,14 +184,24 @@ class home extends React.Component {
 
                             })
 
-                            : <div  className="home-all-articles-container" style={{maxWidth:`${this.state.columnsize}px`}}>
+                            : <div className="home-all-articles-container" style={{ maxWidth: `${this.state.columnsize}px` }}>
                                 {this.state.articles.slice(0).reverse().map((item) => {
-                                    return item.slice(0).reverse().map((article,i) => {
-                                        const queryString = querystring.stringify({ title: article.title })
-                                        return <div key={i} title={article.title} onClick={this.handleLoadArticle} className="home-articles-container" style={{ maxWidth: `${this.state.boxsize}px` }}>
-                                             <a href={`/article/?${queryString}`}><img src={article.urlToImage} alt=""></img></a>
-                                            <span>{article.title}</span>
-                                        </div>
+                                    return item.slice(0).reverse().map((article, i) => {
+                                        const queryString = querystring.stringify({ id: article._id })
+                                        return <div key={i} className="home-articles-container" style={{ width: `${this.state.boxsize}px` }} onClick={this.handleTextClick}>
+                                        {article.vid ?
+                                            <>
+                                                {article.vid.includes("https://www.youtube.com/watch?v=") ?
+                                                    <a href={`/article/?${queryString}`}><img src={article.urlToImage}  alt=""></img></a>
+                                                    : <a href={article.vid}><img src={article.urlToImage} alt=""></img></a>
+                                                    
+                                                    }
+
+                                            </>
+                                            : <a href={`/article/?${queryString}`}><img src={article.urlToImage} alt=""></img></a>
+                                            }
+                                            <span >{article.title}</span>
+                                    </div>
                                     })
                                 })
 

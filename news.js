@@ -24,30 +24,33 @@ function getNews(keyword) {
         //Request to api for news
         await newsapi.v2.everything({
             q: keyword,
-            from: yesterday,
+            from: today,
             to:today 
         }).then(response => {
             try {
                 //goes through returned data   
-                response.articles.map(async (article) => {
+                response.articles.map(async (article,i) => {
                     //checks if theres an article and checks if its new
-                    if (article.description && await checkIfNew(article)) {
-                        //changes publishdAt
-                        const publishedA = article.publishedAt.split("T")[0]
-                        //article schema to add to database
-                        const a = new articleSchema({
-                            author: article.author,
-                            title: article.title,
-                            description: article.description,
-                            url: article.url,
-                            urlToImage: article.urlToImage,
-                            publishedAt: publishedA,
-                            content: article.content,
-                            topic: keyword,
-                        })
-                        //saves to databse
-                        await a.save();
+                    if(i<10){
+                        if (article.description && await checkIfNew(article)) {
+                            //changes publishdAt
+                            const publishedA = article.publishedAt.split("T")[0]
+                            //article schema to add to database
+                            const a = new articleSchema({
+                                author: article.author,
+                                title: article.title,
+                                description: article.description,
+                                url: article.url,
+                                urlToImage: article.urlToImage,
+                                publishedAt: publishedA,
+                                content: article.content,
+                                topic: keyword,
+                            })
+                            //saves to databse
+                            await a.save();
+                        }
                     }
+                    
                     return resolve()
                 })
             } catch (err) {
@@ -85,4 +88,4 @@ function checkIfNew(article) {
     })
 }
 
-getnewNewsFunc()
+ getnewNewsFunc() 

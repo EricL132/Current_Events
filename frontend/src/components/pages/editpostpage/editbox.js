@@ -5,7 +5,6 @@ let continueInterval;
 export default function Editbox(props) {
     const [formInfo, setFormInfo] = useState({
         title: "",
-        author: "",
         topic: "",
         vid: "",
         backupvid: "",
@@ -149,7 +148,6 @@ export default function Editbox(props) {
                 <div id="selected-item-info-container">
                     <div className="inputfield-container">
                         <input className="post-input" defaultValue={displayForm.title} readOnly></input>
-                        <input className="post-input" defaultValue={displayForm.author} readOnly></input>
                         <input className="post-input" defaultValue={displayForm.topic} readOnly></input>
 
                         <div id="image-container">
@@ -164,7 +162,6 @@ export default function Editbox(props) {
                     <h4 style={{ marginTop: "2rem", color: "var(--text-color-white)", textAlign: "center" }}>Edit fields, Leave empty to keep the same </h4>
                     <form id="info-form-edit" className="inputfield-container" style={{ marginTop: "-1.5rem" }} onSubmit={handleEditPost} onChange={changeInput}>
                         <input autoComplete="off" spellCheck={false} id="post-title" name="title" className="post-input" placeholder="Title"></input>
-                        <input autoComplete="off" spellCheck={false} id="post-author" name="author" className="post-input" placeholder="Author"></input>
                         <input autoComplete="off" spellCheck={false} id="post-topic" name="topic" className="post-input" placeholder="Topic"></input>
 
                         <div id="image-container">

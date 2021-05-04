@@ -22,6 +22,8 @@
     "nodemailer": "^6.5.0",
     "nodemon": "^2.0.7",
     "react-router-dom": "^5.2.0",
+    "streamifier": "^0.1.1",
+    "unfurl.js": "^5.2.5",
     "urlencode": "^1.1.0",
     "ytdl-core": "^4.5.0"
   },

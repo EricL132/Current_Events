@@ -31,7 +31,7 @@ class editpost extends React.Component {
                 this.setState({ myArticles: data.articles })
                 this.setState({ searchArticles: data.articles })
             }
-            this.setState({pageloaded:true})
+            this.setState({ pageloaded: true })
         })
     }
     async checkAccess() {
@@ -57,13 +57,15 @@ class editpost extends React.Component {
 
     handleSearch(e) {
         const { name, value } = e.target
-        console.log(e.target)
         this.state.searchFields[name] = value
         let result = this.state.searchArticles
         for (var [key, keyvalue] of Object.entries(this.state.searchFields)) {
             if (keyvalue !== "") {
                 keyvalue = keyvalue.toLowerCase()
                 switch (key) {
+                    case "searchall":
+                        key = "all"
+                        break;
                     case "searchtitle":
                         key = "title"
                         break;
@@ -80,10 +82,26 @@ class editpost extends React.Component {
                         break;
                 }
                 result = result.filter((article) => {
-                    if (article[key]) {
-                        const item = article[key].toLowerCase()
-                        return item.includes(keyvalue)
+                    if (key === "all") {
+                        try {
+                            const title = article["title"].toLowerCase()
+                            const author = article["author"].toLowerCase()
+                            const topic = article["topic"].toLowerCase()
+                            const content = article["content"].toLowerCase()
+                            if (title.includes(keyvalue) || author.includes(keyvalue) || topic.includes(keyvalue) || content.includes(keyvalue)) {
+                                return article
+                            }
+                        } catch (err) {
+
+                        }
+
+                    } else {
+                        if (article[key]) {
+                            const item = article[key].toLowerCase()
+                            return item.includes(keyvalue)
+                        }
                     }
+
                 })
             }
         }
@@ -114,6 +132,7 @@ class editpost extends React.Component {
                         <div id="edit-search-container">
                             <h1 style={{ color: "var(--text-color)" }}>Search For Spcific Article</h1>
                             <form autoComplete="off" spellCheck={false} id="search-inputs-container" onChange={this.handleSearch}>
+                                <input className="edit-input" name="searchall" placeholder="Search All" style={{ minWidth: "60%" }}></input>
                                 <input className="edit-input" name="searchtitle" placeholder="Title"></input>
                                 <input className="edit-input" name="searchauthor" placeholder="Author"></input>
                                 <input className="edit-input" name="searchtopic" placeholder="Topic"></input>
