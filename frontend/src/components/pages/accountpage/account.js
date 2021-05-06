@@ -97,9 +97,7 @@ class account extends React.Component {
                     <div className="different-pages">
                         <ul>
                             <li className="pages-list selected-pages-list">User Settings</li>
-                            {this.state.accountInfo.admin ?
-                                <li className="pages-list">Admin Settings</li>
-                                : null}
+                      
 
                         </ul>
                         <div className="change-container">
@@ -121,25 +119,21 @@ class account extends React.Component {
                                     <div className="error-container">{this.state.errorMessage}</div>
 
                                     <div id="size-buttons-container">
-                                    <div className="homecolumns-container">
-                                        <label for="homecolumnsinput">Column Size</label>
-                                        <input id="homecolumnsinput" type="number" placeholder={this.state.columnsize}></input>
-                                        <button id="change-column-button" onClick={this.changeColumnSize} className="account-admin-button">Change</button>
+                                        <div className="homecolumns-container">
+                                            <label for="homecolumnsinput">Column Size</label>
+                                            <input id="homecolumnsinput" type="number" placeholder={this.state.columnsize}></input>
+                                            <button id="change-column-button" onClick={this.changeColumnSize} className="account-admin-button">Change</button>
 
+                                        </div>
+                                        <div className="homecolumns-container">
+                                            <label for="box-size-input">Box Size</label>
+                                            <input id="box-size-input" type="number" placeholder={this.state.boxsize}></input>
+                                            <button id="change-box-button" onClick={this.changeBoxSize} className="account-admin-button">Change</button>
+                                        </div>
                                     </div>
-                                    <div className="homecolumns-container">
-                                        <label for="box-size-input">Box Size</label>
-                                        <input id="box-size-input" type="number" placeholder={this.state.boxsize}></input>
-                                        <button id="change-box-button" onClick={this.changeBoxSize} className="account-admin-button">Change</button>
-                                    </div>
-                                    </div> 
-                                   
+
                                 </div>
-                                : <>{
-                                    this.state.showadmin ?
-                                        <div></div>
-                                        : null
-                                }</>
+                                : null
                             }
                         </div>
                     </div>
@@ -150,3 +144,9 @@ class account extends React.Component {
 }
 
 export default account;
+
+/* <>{
+                                    this.state.showadmin ?
+                                        <div></div>
+                                        : null
+                                }</> */

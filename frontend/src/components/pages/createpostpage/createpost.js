@@ -12,6 +12,7 @@ class createpost extends React.Component {
         this.handleCreatePost = this.handleCreatePost.bind(this)
         this.checkForImage = this.checkForImage.bind(this)
         this.setImage = this.setImage.bind(this)
+        this.removeImage = this.removeImage.bind(this)
     }
 
     componentDidMount() {
@@ -190,11 +191,17 @@ class createpost extends React.Component {
     setImage(e) {
         this.setState({ image: e.target.value })
     }
+
+    removeImage(){
+        this.setState({image:""})
+        document.getElementById("post-image").value = ""
+    }
     render() {
         return (
             <div className="create-page-container">
                 <div className="create-middle-container">
-                    <div className="inputfield-container" style={{ width: "700px" }}>
+                    <h1 className="create-h1">Create Post</h1>
+                    <div className="inputfield-container">
                         <input autoComplete="off" spellCheck={false} id="post-title" className="post-input" placeholder="Title"></input>
                         <input autoComplete="off" spellCheck={false} id="post-topic" className="post-input" placeholder="Topic"></input>
 
@@ -206,7 +213,13 @@ class createpost extends React.Component {
                             </div>
                         </div>
                         <div id="image-con">
-                            {this.state.image ? <img id="image-box" src={this.state.image}></img> : null}
+
+                            {this.state.image ?
+                                <>
+                                    <button className="delete-image" onClick={this.removeImage}><i class="fas fa-times"></i></button>
+                                    <img id="image-box" src={this.state.image}></img>
+                                </>
+                                : null}
 
                         </div>
 

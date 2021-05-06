@@ -6,11 +6,13 @@
 .create-middle-container {
     margin-top: 5rem;
     background-color: var(--lighter-background);
-   
+    width: 40%;
+    max-width: 650px;
+    min-width: 325px;
 }
 
 .inputfield-container {
-    margin-top: 2.5rem;
+    margin-top: -1rem;
     position: relative;
     display: flex;
     align-items: center;
@@ -76,7 +78,8 @@
 }
 
 #addImageByFile-container{
-    right: .5rem;
+    margin: 2px;
+    right: 0;
     position: absolute;
 }
 
@@ -91,8 +94,33 @@
     padding: .5rem;
 }
 
+.create-h1{
+color: var(--text-color);
+text-align: center;
+font-size: 1.55rem;
+}
+.delete-image{
+    position: absolute;
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    cursor: pointer;   
+    background-color: rgba(0, 0, 0, .5);
+    color: white;
+    padding: .45rem .65rem;
+    text-align: center;
+    margin-top: 1.25rem;
+    margin-left: .25rem;
+    display: none;
+}
+
+
+#image-con:hover .delete-image{
+    display: block;
+}
 #addfileButton:active{
     transform: translateY(1px);
+
 }
 
 #file-input{

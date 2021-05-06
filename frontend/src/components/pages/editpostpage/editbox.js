@@ -145,7 +145,8 @@ export default function Editbox(props) {
     return (
         <>
             {props.isDisplay ?
-                <div id="selected-item-info-container">
+                <div  className="selected-item-infos selected-item-info-container">
+                    <h1 className="create-h1">Edit Post</h1>
                     <div className="inputfield-container">
                         <input className="post-input" defaultValue={displayForm.title} readOnly></input>
                         <input className="post-input" defaultValue={displayForm.topic} readOnly></input>
@@ -158,7 +159,7 @@ export default function Editbox(props) {
                     </div>
                 </div>
 
-                : <div id="selected-item-info-container">
+                : <div className="selected-item-info-container">
                     <h4 style={{ marginTop: "2rem", color: "var(--text-color-white)", textAlign: "center" }}>Edit fields, Leave empty to keep the same </h4>
                     <form id="info-form-edit" className="inputfield-container" style={{ marginTop: "-1.5rem" }} onSubmit={handleEditPost} onChange={changeInput}>
                         <input autoComplete="off" spellCheck={false} id="post-title" name="title" className="post-input" placeholder="Title"></input>

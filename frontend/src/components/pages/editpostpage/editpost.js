@@ -48,7 +48,7 @@ class editpost extends React.Component {
     }
 
     handleSelectItem(e) {
-        document.getElementById("edit-search").style.left = "0"
+        document.getElementById("edit-search").style.right = "0"
         this.setState({ selected: true })
         console.log(e.currentTarget.getAttribute("item"))
         this.setState({ selectedItem: e.currentTarget.getAttribute("item") })
@@ -114,7 +114,6 @@ class editpost extends React.Component {
             <div className="edit-page-container">
                 <div id="selected-edit-container">
                     {this.state.selected ?
-                        <div id="inside">
                             <div id="inside1">
 
                                 <Editbox props={this.props} isDisplay={true} selectedItem={this.state.myArticles[this.state.selectedItem]}></Editbox>
@@ -125,7 +124,7 @@ class editpost extends React.Component {
                             </div>
 
 
-                        </div>
+                       
                         : null}
 
                     <div id="edit-search">

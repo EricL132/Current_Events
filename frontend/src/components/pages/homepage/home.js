@@ -122,11 +122,11 @@ class home extends React.Component {
 
     }
 
-    handleTextClick(e){
-        if(e.target.nodeName!=="IMG"){
-            if(e.target.classList.contains("home-articles-container")){
-                window.location.href =  e.target.firstChild
-            }else{
+    handleTextClick(e) {
+        if (e.target.nodeName !== "IMG") {
+            if (e.target.classList.contains("home-articles-container")) {
+                window.location.href = e.target.firstChild
+            } else {
                 window.location.href = e.target.previousElementSibling
             }
         }
@@ -137,78 +137,82 @@ class home extends React.Component {
             <div className="page-container">
 
                 {this.state.articles ?
-                    <div className="home-all-articles-container" style={{ minWidth: `1500px` }}>
+                    <>
 
                         {this.props.displaySlide ?
+                            <div className="home-all-articles-container" style={{ width: `1451px` }}>
+                                {this.state.articles.slice(0).reverse().map((articleType, i) => {
+                                    return <div key={i} className="topics-container">
+                                        {articleType[0] ?
+                                            <h1 className="topic-title">{articleType[0].topic.substring(0, 1).toUpperCase() + articleType[0].topic.substring(1, articleType[0].topic.length)}</h1>
 
-                            this.state.articles.slice(0).reverse().map((articleType, i) => {
-                                return <div key={i} className="topics-container">
-                                    {articleType[0] ?
-                                        <h1 className="topic-title">{articleType[0].topic.substring(0, 1).toUpperCase() + articleType[0].topic.substring(1, articleType[0].topic.length)}</h1>
-
-                                        : null}
+                                            : null}
 
 
 
-                                    <div className="topic-articles">
-                                        {articleType.slice(0).reverse().map((article, i) => {
-                                            const queryString = querystring.stringify({ id: article._id })
-                                            return <div key={i} className="home-articles-container" style={{ minWidth: `280px` }} onClick={this.handleTextClick}>
-                                                {article.vid ?
-                                                    <>
-                                                        {article.vid.includes("https://www.youtube.com/watch?v=") ?
-                                                            <a href={`/article/?${queryString}`}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
-                                                            : <a href={article.vid}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
-                                                            
+                                        <div className="topic-articles">
+                                            {articleType.slice(0).reverse().map((article, i) => {
+                                                const queryString = querystring.stringify({ id: article._id })
+                                                return <div key={i} className="home-articles-container" style={{ maxWidth: "280px" }} onClick={this.handleTextClick}>
+                                                    {article.vid ?
+                                                        <>
+                                                            {article.vid.includes("https://www.youtube.com/watch?v=") ?
+                                                                <a href={`/article/?${queryString}`}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
+                                                                : <a href={article.vid}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
+
                                                             }
 
-                                                    </>
-                                                    : <a href={`/article/?${queryString}`}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
+                                                        </>
+                                                        : <a href={`/article/?${queryString}`}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
                                                     }
                                                     <span >{article.title}</span>
+                                                </div>
+                                            })
+                                            }
+
+
+
+
+                                            <div className="slide-button-container-left">
+                                                <button className="slide-article-button" onClick={this.handleLeftScroll}><i className="fas fa-arrow-left"></i></button>
                                             </div>
-                                        })
-                                        }
+                                            <div className="slide-button-container-right">
+                                                <button className="slide-article-button" onClick={this.handleRightScroll}><i className="fas fa-arrow-right"></i></button>
+                                            </div>
 
 
-
-                                        <div className="slide-button-container-left">
-                                            <button className="slide-article-button" onClick={this.handleLeftScroll}><i className="fas fa-arrow-left"></i></button>
                                         </div>
-                                        <div className="slide-button-container-right">
-                                            <button className="slide-article-button" onClick={this.handleRightScroll}><i className="fas fa-arrow-right"></i></button>
-                                        </div>
+
                                     </div>
 
-                                </div>
-
-                            })
-
+                                })
+                                }
+                            </div>
                             : <div className="home-all-articles-container" style={{ maxWidth: `${this.state.columnsize}px` }}>
                                 {this.state.articles.slice(0).reverse().map((item) => {
                                     return item.slice(0).reverse().map((article, i) => {
                                         const queryString = querystring.stringify({ id: article._id })
-                                        return <div key={i} className="home-articles-container" style={{ width: `${this.state.boxsize}px` }} onClick={this.handleTextClick}>
-                                        {article.vid ?
-                                            <>
-                                                {article.vid.includes("https://www.youtube.com/watch?v=") ?
-                                                    <a href={`/article/?${queryString}`}><img src={article.urlToImage}  alt=""></img></a>
-                                                    : <a href={article.vid}><img src={article.urlToImage} alt=""></img></a>
-                                                    
+                                        return <div key={i} className="home-articles-container" style={{ width: `${this.state.boxsize}px`, height: `${this.state.boxsize}px` }} onClick={this.handleTextClick}>
+                                            {article.vid ?
+                                                <>
+                                                    {article.vid.includes("https://www.youtube.com/watch?v=") ?
+                                                        <a href={`/article/?${queryString}`}><img src={article.urlToImage} className="boxes-image" alt=""></img></a>
+                                                        : <a href={article.vid}><img className="boxes-image" src={article.urlToImage} alt=""></img></a>
+
                                                     }
 
-                                            </>
-                                            : <a href={`/article/?${queryString}`}><img src={article.urlToImage} alt=""></img></a>
+                                                </>
+                                                : <a href={`/article/?${queryString}`}><img className="boxes-image" src={article.urlToImage} alt=""></img></a>
                                             }
                                             <span >{article.title}</span>
-                                    </div>
+                                        </div>
                                     })
                                 })
 
                                 }
                             </div>}
 
-                    </div>
+                    </>
                     : null}
 
 
