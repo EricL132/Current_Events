@@ -254,15 +254,15 @@
     cursor: pointer;
     margin-top: 2rem;
     position: absolute;
-    right: -3.5rem;
+    right: 10px;
 }
 
 .moon-icon-login {
     height: 36px;
     width: 40px;
-    margin-left: 4.5px;
     position: absolute;
     border-radius: 5px;
+    right: 8.1rem;
     outline: none;
     background-color: var(--background-color);
     color: var(--text-color-white);
@@ -275,7 +275,7 @@
 .grid-icon-login {
     height: 36px;
     width: 40px;
-    right: 7.2rem;
+    right: 11.1rem;
     position: absolute;
     border-radius: 5px;
     outline: none;
@@ -299,6 +299,7 @@
     color: var(--text-color-white);
     z-index: 10;
     top: 0;
+ 
 }
 
 
@@ -315,7 +316,7 @@
     border: 1.3px solid var(--text-color-black);
     margin-top: 4rem;
     position: absolute;
-    right: -3.5rem;
+    right: 10px;
 }
 
 #dropdown-menu li {
@@ -344,7 +345,6 @@
 .nav-dropdown-container {
     position: relative;
     align-self: flex-end;
-    right: 4.5rem;
     height: 300px;
     width: 110px;
     border-radius: 4px;
@@ -403,5 +403,20 @@
 }
 
 .dropdown-search-content .search-buttons:hover{
-    opacity: .6;
+    background-color: var(--light-blue);
+}
+
+
+@media(max-width:600px){
+    .set-buttons{
+        display: none;
+    }
+  
+}
+
+@media(max-width:470px){
+    .dropdown-search{
+        left: 120px;
+        width: 110px;
+    }
 }

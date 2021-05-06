@@ -357,8 +357,8 @@ class nav extends React.Component {
                         : null}
                     {!this.state.loggedIn ?
                         <div className="nav-dropdown-container">{/* <i class="fas fa-grip-lines"></i> */}
-                            <button onClick={this.props.handleDisplayMode} className="grid-icon-login" stlye={{marginRight:"2rem"}}><i class="fas fa-th"></i></button>
-                            <button onClick={this.handleDarkMode} className="moon-icon-login"><i className="far fa-moon"></i></button>
+                            <button onClick={this.props.handleDisplayMode} className="grid-icon-login set-buttons" stlye={{ marginRight: "2rem" }}><i class="fas fa-th"></i></button>
+                            <button onClick={this.handleDarkMode} className="moon-icon-login set-buttons"><i className="far fa-moon"></i></button>
                             <button onClick={this.handleShowLogin} id="open-login-button"></button>
                         </div>
                         :
@@ -369,6 +369,17 @@ class nav extends React.Component {
                             {this.state.showmenu ?
                                 <div id="dropdown-menu">
                                     <ul>
+                                        <li>
+                                            <button onClick={this.handleAccount}>Account</button>
+                                        </li>
+                                        <li>
+                                            <button onClick={this.handleLoadCreate}>Create Post</button>
+                                        </li>
+                                        <li>
+                                            <button onClick={this.handleLoadEdit}>Edit Post</button>
+                                        </li>
+
+
 
                                         {this.state.darkmode ?
                                             <li >
@@ -388,18 +399,11 @@ class nav extends React.Component {
                                             </li>}
 
 
-                                        <li>
-                                            <button onClick={this.handleLoadCreate}>Create Post</button>
-                                        </li>
-                                        <li>
-                                            <button onClick={this.handleLoadEdit}>Edit Post</button>
-                                        </li>
 
 
 
-                                        <li>
-                                            <button onClick={this.handleAccount}>Account</button>
-                                        </li>
+
+
                                         <li>
                                             <button className="dropdown-button" onClick={this.handleLogout} >Logout</button>
                                         </li>

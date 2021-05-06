@@ -113,7 +113,6 @@ const editPostValidation = (data)=>{
     const schema = Joi.object({
         "": Joi.string(),
         title: Joi.string().allow('').required(),
-        author: Joi.string().allow('').required(),
         topic: Joi.string().allow('').required(),
         vid: Joi.string().allow('').required(),
         urlToImage: Joi.string().allow('').required(),

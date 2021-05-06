@@ -52,6 +52,7 @@ class editpost extends React.Component {
         this.setState({ selected: true })
         console.log(e.currentTarget.getAttribute("item"))
         this.setState({ selectedItem: e.currentTarget.getAttribute("item") })
+        window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
 

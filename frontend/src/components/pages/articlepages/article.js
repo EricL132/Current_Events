@@ -92,7 +92,7 @@ class article extends React.Component {
                         <div className="article-info">
                             <h1 className="article-title">{this.state.article.title}</h1>
                             <h3 className="author-name">{this.state.article.author}, {this.state.article.publishedAt} {this.state.article.editDate?<span style={{opacity:".6",fontSize:".7rem"}}>Last edited: {this.state.article.editDate}</span>:null}</h3>
-                            <span className="article-description">{this.state.article.description}</span>
+                            <span className="article-description">{this.state.article.content}</span>
                             {this.state.article.url?<h4>Read Full Article At: <a href={this.state.article.url} target="_blank" style={{ "textDecoration": "none", "color": "var(--text-color-white)" }}>Link</a></h4>:null}
                         </div>
                         <div id="comments-container">

@@ -93,11 +93,11 @@ class account extends React.Component {
         return (
             <div className="account-page-container">
                 <div className="middle-container">
-                    <h1>{this.state.accountInfo.name}</h1>
+                    <h1 className="name-h1">{this.state.accountInfo.name}</h1>
                     <div className="different-pages">
                         <ul>
                             <li className="pages-list selected-pages-list">User Settings</li>
-                      
+
 
                         </ul>
                         <div className="change-container">
@@ -115,9 +115,8 @@ class account extends React.Component {
                                         <input autoComplete="off" spellCheck={false} id="newpass" type="password" className="default-input user-info-input" placeholder="New Password"></input>
                                         <input autoComplete="off" spellCheck={false} id="confirmnewpass" type="password" className="default-input user-info-input" placeholder="Confirm New Password"></input>
                                         <button id="change-pass-button" className="default-blue-button user-info-button" onClick={this.handleChangePass}>Change Password</button>
+                                        <div className="error-container">{this.state.errorMessage}</div>
                                     </form>
-                                    <div className="error-container">{this.state.errorMessage}</div>
-
                                     <div id="size-buttons-container">
                                         <div className="homecolumns-container">
                                             <label for="homecolumnsinput">Column Size</label>
@@ -131,7 +130,7 @@ class account extends React.Component {
                                             <button id="change-box-button" onClick={this.changeBoxSize} className="account-admin-button">Change</button>
                                         </div>
                                     </div>
-
+                                    
                                 </div>
                                 : null
                             }

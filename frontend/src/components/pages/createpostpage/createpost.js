@@ -80,16 +80,14 @@ class createpost extends React.Component {
                 loadingSpan.classList += " loading"
                 if (!this.state.image.includes("https://drive.google.com/uc?id=")) {
 
-                    try {
-                        await fetch(`/info/saveimage?image=${this.state.image}`, { method: "POST" }).then(async (res) => {
-                            const resInfo = await res.json()
-                            this.setState({ driveLink: `https://drive.google.com/uc?id=${resInfo.imagelink}` })
-                        })
+
+                    await fetch(`/info/saveimage?image=${this.state.image}`, { method: "POST" }).then(async (res) => {
+                        const resInfo = await res.json()
+                        this.setState({ driveLink: `https://drive.google.com/uc?id=${resInfo.imagelink}` })
+                    })
 
 
-                    } catch (err) {
-                        this.setState({ driveLink: this.state.image })
-                    }
+
 
                 }
                 continueInterval = setInterval(async () => {
@@ -97,9 +95,19 @@ class createpost extends React.Component {
                         clearInterval(continueInterval)
                         if (this.state.tokenInfo.admin && video.includes("https://www.youtube.com/watch?v=") || this.state.tokenInfo.subadmin && video.includes("https://www.youtube.com/watch?v=")) {
 
-                            const link = video.split('=')[1]
-                            fetch('/info/createbackupvid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link: link }) }).then(async (res) => {
-                                if (!res.ok) return res.json()
+
+                            fetch('/info/createbackupvid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link: video }) }).then(async (res) => {
+                                if (!res.ok) {
+
+                                    console.log("failed")
+                                    this.setState({ articleCreated: false })
+                                    this.setState({ errorMessage: "Failed to create post" })
+
+                                    const loadingSpan = document.getElementsByClassName("loading-span")[0]
+                                    loadingSpan.innerHTML = "Edit Article"
+                                    loadingSpan.classList += "loading-span"
+                                    return
+                                }
                                 const reslink = await res.json()
                                 const backupvid = 'https://drive.google.com/file/d/' + reslink.link + '/preview'
                                 await fetch('/info/createarticle', {
@@ -112,21 +120,19 @@ class createpost extends React.Component {
                                         content: information
                                     })
                                 }).then((res) => {
-                                    if (!res.ok) return res.json()
+                                    if (!res.ok) {
+                                        console.log("failed")
+                                        this.setState({ articleCreated: false })
+                                        this.setState({ errorMessage: "Failed to create post" })
+                                        const loadingSpan = document.getElementsByClassName("loading-span")[0]
+                                        loadingSpan.innerHTML = "Edit Article"
+                                        loadingSpan.classList += "loading-span"
+                                        return
+                                    }
                                     this.props.history.push('/')
 
-                                }).then((data) => {
-                                    if (data) {
-                                        this.setState({ articleCreated: false })
-                                        this.setState({ errorMessage: data.status })
-                                    }
                                 })
 
-                            }).then((data) => {
-                                if (data) {
-                                    this.setState({ articleCreated: false })
-                                    this.setState({ errorMessage: data.status })
-                                }
                             })
                         } else {
                             await fetch('/info/createarticle', {
@@ -139,14 +145,17 @@ class createpost extends React.Component {
                                     content: information
                                 })
                             }).then((res) => {
-                                if (!res.ok) return res.json()
+                                if (!res.ok) {
+                                    console.log("failed")
+                                    this.setState({ articleCreated: false })
+                                    this.setState({ errorMessage: "Failed to create post" })
+                                    const loadingSpan = document.getElementsByClassName("loading-span")[0]
+                                    loadingSpan.innerHTML = "Edit Article"
+                                    loadingSpan.classList += "loading-span"
+                                    return
+                                }
                                 this.props.history.push('/')
 
-                            }).then((data) => {
-                                if (data) {
-                                    this.setState({ articleCreated: false })
-                                    this.setState({ errorMessage: data.status })
-                                }
                             })
 
                         }
@@ -192,8 +201,8 @@ class createpost extends React.Component {
         this.setState({ image: e.target.value })
     }
 
-    removeImage(){
-        this.setState({image:""})
+    removeImage() {
+        this.setState({ image: "" })
         document.getElementById("post-image").value = ""
     }
     render() {

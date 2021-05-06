@@ -49,17 +49,14 @@
 .change-container{
     position: absolute;
     width: 70%;
-    height: 100%;
     left: 12rem;
     top: 1rem;
     border-radius: 5px;
     border: 1px solid var(--light-blue);
     outline: none;
+    min-width: 400px;
 }
 
-.user-config-container{
-
-}
 
 .homecolumns-container{
     display: flex;
@@ -91,6 +88,7 @@
 #size-buttons-container{
     display: flex;
     flex-direction: row;
+    margin-bottom: 2rem;
 }
 .homecolumns-container button{
     width: 120px;
@@ -133,6 +131,7 @@
     display: flex;
     flex-direction: column;
     margin: 3rem;
+    position: relative; 
     
 }
 
@@ -147,8 +146,20 @@
     margin-top: 10px;
 }
 
+
 @media(max-width:600px){
     .different-pages ul{
         display: none;
+    }
+    .change-container{
+        position: absolute;
+        width: 70%;
+        left: 50%;
+        transform: translateX(-50%);
+
+    }
+    .name-h1{
+       width: 100%;
+       text-align: center;
     }
 }

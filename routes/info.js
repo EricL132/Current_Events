@@ -116,16 +116,23 @@ router.post('/createbackupvid', async (req, res) => {
     //Checks if admin
     const userInfo = await checkLogin(req)
     if (userInfo.admin === false && userInfo.subadmin === false) return res.status(400).send({ "status": "Admin privileges required to save videos" })
-    try {
-        //Downloads youtube video to server
-        ytdl(`https://www.youtube.com/watch?v=${req.body.link}`).pipe(fs.createWriteStream('video.mp4').on('finish', async () => {
-            const link = await saveToDrive(req.body.link)
-            return res.status(200).send({ link: link })
-        }))
+    let link = req.body.link
+    fetch(`https://www.youtube.com/oembed?url=${link}&format=json`).then((checkVid) => {
+        if (checkVid.ok) {
+            link = link.split("=")[1].split("&")[0]
 
-    } catch (err) {
-        return res.status(400).send({ msg: "Video not found" })
-    }
+            ytdl(`https://www.youtube.com/watch?v=${link}`).pipe(fs.createWriteStream('video.mp4')).on('finish', async () => {
+                const drivelink = await saveToDrive(link)
+                return res.status(200).send({ link: drivelink })
+            })
+
+
+
+
+        } else {
+            return res.status(400).send("Not a video")
+        }
+    })
 })
 
 
@@ -275,7 +282,7 @@ router.get('/myarticles', async (req, res) => {
 router.post('/editpost', async (req, res) => {
     const form = req.body.formInfo
     const { error } = editPostValidation(form)
-    if (error) return res.status(400).send({ "status": "Invalid form" })
+    if (error) return res.status(400).send({ "status": error.details[0].message })
     const userInfo = await checkLogin(req)
     if (!userInfo) return res.status(403).send({ "status": "unauthorized" })
     const articleToEdit = await articlesSchema.findOne({ _id: form.article })
@@ -314,8 +321,13 @@ router.put('/deletepost', async (req, res) => {
 })
 
 router.get('/siteimage', async (req, res) => {
-    const result = await unfurl(req.query.site)
-    res.send(result)
+    try{
+        const result = await unfurl(req.query.site)
+        res.send(result)
+    }catch(err){
+        res.status(400).end()
+    }
+    
 })
 
 module.exports = router
