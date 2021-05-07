@@ -204,7 +204,6 @@ class nav extends React.Component {
 
             const loginB = navbar.children[0].children[0]
             const moonicon = navbar.children[0].children[1]
-            navbar.style.border = '1px solid black'
             navbar.style.color = 'var(--text-color-black)'
             document.documentElement.style.setProperty('--background-color', '#f7f7f8');
             document.documentElement.style.setProperty('--lighter-background', '#fff');
@@ -226,7 +225,6 @@ class nav extends React.Component {
             const navbar = document.getElementById('nav-container')
             const loginB = navbar.children[0].children[0]
             const moonicon = navbar.children[0].children[1]
-            navbar.style.border = ''
             navbar.style.color = 'var(--text-color-white)'
             document.documentElement.style.setProperty('--background-color', '#0E0E0E');
             document.documentElement.style.setProperty('--lighter-background', '#18181b');
@@ -340,6 +338,7 @@ class nav extends React.Component {
                     {window.location.pathname === "/" ?
                         <div className="dropdown-search">
                             <input autoComplete="off" placeholder="Search" spellCheck="false" className="search-input" id="search-input"></input>
+                            {/* <div id="search-display"><span>All:</span></div> */}
                             <div id="search-menu-type" className="dropdown-search-content">
                                 <button className="search-buttons" s="search" >Search All</button>
                                 <button className="search-buttons" s="title" >Search By Title</button>

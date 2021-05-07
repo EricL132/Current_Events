@@ -31,7 +31,6 @@ class home extends React.Component {
 
     }
     handleSearchReturn(e) {
-        console.log(e.target)
         const stype = e.target.getAttribute("s")
         this.props.handleChangeSearchType(stype)
         document.getElementById("search-input").placeholder = stype.slice(0, 1).toUpperCase() + stype.slice(1, stype.length)
