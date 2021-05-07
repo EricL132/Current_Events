@@ -304,7 +304,6 @@ router.post('/editpost', async (req, res) => {
 })
 
 router.put('/deletepost', async (req, res) => {
-    console.log(req.body)
     const articleID = req.body.articleID
     if (!articleID) return res.status(400).send({ "status": "Couldn't find article" })
     const userInfo = await checkLogin(req)

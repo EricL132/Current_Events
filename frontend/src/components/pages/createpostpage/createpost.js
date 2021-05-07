@@ -99,7 +99,6 @@ class createpost extends React.Component {
                             fetch('/info/createbackupvid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link: video }) }).then(async (res) => {
                                 if (!res.ok) {
 
-                                    console.log("failed")
                                     this.setState({ articleCreated: false })
                                     this.setState({ errorMessage: "Failed to create post" })
 
@@ -121,7 +120,6 @@ class createpost extends React.Component {
                                     })
                                 }).then((res) => {
                                     if (!res.ok) {
-                                        console.log("failed")
                                         this.setState({ articleCreated: false })
                                         this.setState({ errorMessage: "Failed to create post" })
                                         const loadingSpan = document.getElementsByClassName("loading-span")[0]
@@ -146,7 +144,6 @@ class createpost extends React.Component {
                                 })
                             }).then((res) => {
                                 if (!res.ok) {
-                                    console.log("failed")
                                     this.setState({ articleCreated: false })
                                     this.setState({ errorMessage: "Failed to create post" })
                                     const loadingSpan = document.getElementsByClassName("loading-span")[0]

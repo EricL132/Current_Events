@@ -31,10 +31,15 @@ class home extends React.Component {
 
     }
     handleSearchReturn(e) {
-        const stype = e.target.getAttribute("s")
+        let stype = e.target.getAttribute("s")
         this.props.handleChangeSearchType(stype)
-        document.getElementById("search-input").placeholder = stype.slice(0, 1).toUpperCase() + stype.slice(1, stype.length)
+        stype= stype.slice(0, 1).toUpperCase() + stype.slice(1, stype.length)
+        document.getElementById("search-input").placeholder = stype
         const searchParam = document.getElementById('search-input')
+        if(stype==="Search"){
+            stype="All"
+        }
+        document.getElementById("search-display-span").textContent = stype+":"
         this.performSearch(searchParam)
     }
     performSearch(searchParam) {
@@ -64,8 +69,6 @@ class home extends React.Component {
                         }
                     }
                 }
-
-
 
             })
         })
@@ -146,9 +149,6 @@ class home extends React.Component {
                                             <h1 className="topic-title">{articleType[0].topic.substring(0, 1).toUpperCase() + articleType[0].topic.substring(1, articleType[0].topic.length)}</h1>
 
                                             : null}
-
-
-
                                         <div className="topic-articles">
                                             {articleType.slice(0).reverse().map((article, i) => {
                                                 const queryString = querystring.stringify({ id: article._id })

@@ -1,6 +1,7 @@
-import { timingSafeEqual } from 'crypto'
 import React from 'react'
 import './resetpass.css'
+
+
 
 class resetpass extends React.Component {
     constructor(props) {

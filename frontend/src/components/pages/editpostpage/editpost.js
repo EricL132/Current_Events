@@ -50,7 +50,6 @@ class editpost extends React.Component {
     handleSelectItem(e) {
         document.getElementById("edit-search").style.right = "0"
         this.setState({ selected: true })
-        console.log(e.currentTarget.getAttribute("item"))
         this.setState({ selectedItem: e.currentTarget.getAttribute("item") })
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
@@ -120,7 +119,7 @@ class editpost extends React.Component {
                                 <Editbox props={this.props} isDisplay={true} selectedItem={this.state.myArticles[this.state.selectedItem]}></Editbox>
 
 
-                                <Editbox props={this.props} selectedItem={this.state.myArticles[this.state.selectedItem]}></Editbox>
+                                <Editbox props={this.props}  selectedItem={this.state.myArticles[this.state.selectedItem]}></Editbox>
 
                             </div>
 

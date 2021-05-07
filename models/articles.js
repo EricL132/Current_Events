@@ -41,7 +41,8 @@ const articlesSchema = new mongoose.Schema({
     },
     editDate:{
         type:String
-    }
+    },
+    
 })
 // newsapi ad70d5a6b15a41be91901d72899fef58 
 

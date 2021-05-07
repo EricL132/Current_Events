@@ -332,13 +332,12 @@ class nav extends React.Component {
     render() {
         return (
             <>
-
                 <div id="nav-container">
                     <button onClick={this.handleGoToHome} className="home-button">Home</button>
                     {window.location.pathname === "/" ?
                         <div className="dropdown-search">
                             <input autoComplete="off" placeholder="Search" spellCheck="false" className="search-input" id="search-input"></input>
-                            {/* <div id="search-display"><span>All:</span></div> */}
+                            <div id="search-display"><span id="search-display-span">All:</span></div> 
                             <div id="search-menu-type" className="dropdown-search-content">
                                 <button className="search-buttons" s="search" >Search All</button>
                                 <button className="search-buttons" s="title" >Search By Title</button>

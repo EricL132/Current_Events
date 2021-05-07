@@ -31,7 +31,6 @@ export default function Editbox(props) {
 
     }, [props])
     useEffect(() => {
-        console.log("form changed")
         if (articleCreated) {
             editRequest()
         }
@@ -58,14 +57,12 @@ export default function Editbox(props) {
         e.preventDefault()
         const { name, value } = e.target
         setFormInfo(prev => ({ ...prev, [name]: value }))
-        console.log(formInfo)
     }
 
 
 
     async function editRequest() {
         if (formInfo.vid !== "") {
-            console.log("inside")
             if (formInfo.urlToImage.includes("https://drive.google.com/uc?id=") || formInfo.urlToImage === "") {
                 const res = await fetch('/info/createbackupvid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link: formInfo.vid }) })
                 if (res.ok) {
