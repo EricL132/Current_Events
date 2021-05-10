@@ -18,6 +18,7 @@ class App extends React.Component {
     }
     this.handleChangeSearchType = this.handleChangeSearchType.bind(this)
   }
+  //checks for display type to display
   componentDidMount(){
     const display = localStorage.getItem("displayslide")
     if(display==="true"){
@@ -26,13 +27,16 @@ class App extends React.Component {
       this.setState({displaySlide:true})
     }
   }
+  //change diplay mode
   handleDisplayMode(){
     this.setState({displaySlide:!this.state.displaySlide})
   }
+  //change search type
   handleChangeSearchType(type){
     this.setState({typeOfSearch:type})
   }
 
+  //Different Routes and navbar componenet
   render() {
     return (
       <BrowserRouter>

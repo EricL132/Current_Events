@@ -156,6 +156,7 @@ router.post('/resetpass',async(req,res)=>{
     return res.status(200).send({ status: "Reset password email sent" })
 })
 
+//POST route to reset password
 router.post('/reset',async (req,res)=>{
     const {error} = resetpassConfirmValidation(req.body)
     if(error) return res.status(400).send({status:"Invalid Token"})
@@ -177,6 +178,7 @@ router.post('/reset',async (req,res)=>{
 
 })
 
+//POST route to change password from user account page
 router.post('/changepass',async (req,res)=>{
     const {error} = changepassValidation(req.body)
     if(error) return res.status(400).send({status:error.details[0].message})

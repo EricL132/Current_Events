@@ -1,3 +1,4 @@
+//Navbar component
 import React from 'react'
 import './nav.css'
 import { withRouter } from 'react-router-dom';
@@ -32,7 +33,7 @@ class nav extends React.Component {
 
 
 
-
+    //Checks for login and dark/light mode
     componentDidMount() {
         //this.getWeather()
         const darkmode = localStorage.getItem("darkmode")
@@ -55,6 +56,7 @@ class nav extends React.Component {
 
     }
 
+    //Function to check login
     async checkForLogin() {
         const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
         if (res.status === 200) {
@@ -72,11 +74,13 @@ class nav extends React.Component {
         }
     }
 
-
+    //Function to decode jwt token
     async jwtDecode() {
 
         return JSON.parse(window.atob(this.state.accessToken.split('.')[1]));
     }
+
+    //Function to check if access token expired
     async checkAccess() {
         if (this.state.loggedIn) {
             const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
@@ -89,14 +93,19 @@ class nav extends React.Component {
         }
     }
 
+    //Removes the check access token interval
     componentWillUnmount() {
         clearInterval(interval)
     }
+
+    //Function to get weather in new york
     async getWeather() {
         const res = await fetch('http://api.weatherstack.com/current?access_key=382bce18da87832e602b2515716a2a0f&query=New%20York&units=f')
         const weatherInfo = await res.json()
         this.setState({ weather: weatherInfo.current.temperature })
     }
+
+    //Function used to handle close login popup when clicked outside of it
     handleOutsideClick(e) {
         const ele = document.getElementById('lighter-outside')
         if (e.target === ele) {
@@ -106,12 +115,14 @@ class nav extends React.Component {
             this.setState({ errorMessage: "" })
         }
     }
-
+    //Function to set display modes
     handleDisplayMode() {
         this.props.handleDisplayMode()
         localStorage.setItem('displayslide', this.props.displaySlide)
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
+
+    //Function to show login popup
     handleShowLogin(e) {
         this.setState({ errorMessage: "" })
         if (!this.state.showLogin) {
@@ -123,6 +134,7 @@ class nav extends React.Component {
         }
     }
 
+    //Function to close signup popup and go to login popup
     handleSignupFormClose() {
         this.setState({ errorMessage: "" })
         if (!this.state.signUp) {
@@ -132,10 +144,13 @@ class nav extends React.Component {
         }
     }
 
+    //Function to navigate to account page (login required)
     handleAccount() {
         this.setState({ showmenu: false })
         this.props.history.push('/account')
     }
+
+    //Handles sign up
     async handleSignup() {
         const loadingContainer = document.getElementsByClassName('loading-span')[0]
         loadingContainer.innerHTML = ""
@@ -168,7 +183,7 @@ class nav extends React.Component {
             this.setState({ loggedIn: true })
         }
     }
-
+    //Handles login
     async handleLogin() {
         const loadingContainer = document.getElementsByClassName('loading-span')[0]
         loadingContainer.innerHTML = ""
@@ -197,7 +212,7 @@ class nav extends React.Component {
 
 
     }
-
+    //Handles display dark/light mode
     async handleDarkMode(item) {
         if (this.state.darkmode) {
             const navbar = document.getElementById('nav-container')
@@ -247,6 +262,7 @@ class nav extends React.Component {
         this.setState({ showmenu: false })
     }
 
+    //Handles whether menu should be shown
     handleShowMenu(e) {
         if (e.type === 'blur') {
             if (!e.relatedTarget) {
@@ -271,6 +287,7 @@ class nav extends React.Component {
 
     }
 
+    //Shows forget password page or closes forgot password page and shows login popup
     handleShowForgotpass() {
         this.setState({ errorMessage: "" })
         if (!this.state.forgotpassword) {
@@ -280,6 +297,7 @@ class nav extends React.Component {
         }
     }
 
+    //Handles logout
     async handleLogout() {
         const res = await fetch('/user/account/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
         if (res.status === 200) {
@@ -295,6 +313,7 @@ class nav extends React.Component {
         }
     }
 
+    //Handles send resetpassword request
     async handleForgotPass(e) {
         e.preventDefault()
         const email = document.getElementById("email").value
@@ -308,6 +327,7 @@ class nav extends React.Component {
 
     }
 
+    //Handles return to homepage from differnt page on site
     handleGoToHome() {
         if (window.location.pathname === "/") {
             this.setState({ showmenu: false })
@@ -318,17 +338,19 @@ class nav extends React.Component {
         }
     }
 
+    //Goes to create post page
     handleLoadCreate() {
         this.setState({ showmenu: false })
         this.props.history.push('/createpost')
     }
 
+    //Goes to edit post page
     handleLoadEdit() {
         this.setState({ showmenu: false })
         this.props.history.push('/editpost')
     }
 
-
+    
     render() {
         return (
             <>

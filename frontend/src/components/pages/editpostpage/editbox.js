@@ -17,6 +17,8 @@ export default function Editbox(props) {
     })
     const [articleCreated, setarticleCreated] = useState(false)
     const [errorMessage, seterrorMessage] = useState("")
+
+    //Listens for click button to add a image from desktop
     useEffect(() => {
         document.getElementById("file-input").addEventListener('click', (e) => {
             e.stopPropagation();
@@ -24,12 +26,15 @@ export default function Editbox(props) {
         })
 
     })
+
+    //Component used to show current article details and things to edit so displayed
     useEffect(() => {
         if (props.isDisplay) {
             setdisplayForm(props.selectedItem)
         }
 
     }, [props])
+    //Rerenders component when forminfo changes
     useEffect(() => {
         if (articleCreated) {
             editRequest()
@@ -37,7 +42,7 @@ export default function Editbox(props) {
     }, [formInfo])
 
 
-
+    //Handles file upload from desktop
     function handleFileChange() {
         const file = document.getElementById("file-input").files[0]
         const form = new FormData()
@@ -53,6 +58,8 @@ export default function Editbox(props) {
 
         })
     }
+
+    //Changes forminfo when called (something should be edited)
     const changeInput = (e) => {
         e.preventDefault()
         const { name, value } = e.target
@@ -60,7 +67,7 @@ export default function Editbox(props) {
     }
 
 
-
+    //Sends edit request to server
     async function editRequest() {
         if (formInfo.vid !== "") {
             if (formInfo.urlToImage.includes("https://drive.google.com/uc?id=") || formInfo.urlToImage === "") {
@@ -107,6 +114,8 @@ export default function Editbox(props) {
 
         }
     }
+
+    //Saves image to drive if image is changed else called editRequest to edit article
     function handleEditPost(e) {
         e.preventDefault()
         if (!articleCreated) {
@@ -131,12 +140,13 @@ export default function Editbox(props) {
 
     }
 
+    //Function used for file upload from desktop
     function handleFileInput() {
 
         document.getElementById("file-input").click();
 
     }
-
+    //Called when delete article is clicked
     function handleDeletePost() {
         fetch("/info/deletepost", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ articleID: formInfo.article }) }).then(async (res) => {
             if (res.ok) return props.props.history.push("/")
@@ -145,36 +155,7 @@ export default function Editbox(props) {
         })
     }
 
-    function checkForImage() {
-        const link = document.getElementById("post-video").value
-        if (link) {
-            fetch(`/info/siteimage?site=${link}`).then((res) => res.json()).then((data) => {
 
-                try {
-                    if (data["twitter_card"].images) {
-                        setFormInfo((prev) => ({ ...prev, urlToImage: data["twitter_card"].images[0].url }))
-                        document.getElementById("post-image").value = data["twitter_card"].images[0].url
-                    }
-
-
-                } catch (err) {
-                    try {
-                        if (data["twitter_card"].images) {
-                            setFormInfo((prev) => ({ ...prev, urlToImage: data["open_graph"].images[0].url }))
-                            document.getElementById("post-image").value = data["open_graph"].images[0].url
-                        }
-
-                    } catch (err) {
-
-                    }
-                }
-
-
-
-            })
-        }
-
-    }
     return (
         <>
             {props.isDisplay ?
@@ -205,7 +186,7 @@ export default function Editbox(props) {
                                 <button id="addfileButton" onClick={handleFileInput} type="button"><i className="fas fa-plus"></i></button>
                             </div>
                         </div>
-                        <input autoComplete="off" spellCheck={false} id="post-video" name="vid" className="post-input" onChange={checkForImage} placeholder="Youtube Link/Website Link"></input>
+                        <input autoComplete="off" spellCheck={false} id="post-video" name="vid" className="post-input"  placeholder="Youtube Link/Website Link"></input>
                         <textarea autoComplete="off" spellCheck={false} className="post-input post-info" name="content" style={{ height: "22rem" }} placeholder="Information"></textarea>
                         <span id="error-Message" style={{ bottom: "-1rem" }}>{errorMessage}</span>
                         <div id="submit-buttom-container">

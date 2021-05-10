@@ -15,10 +15,12 @@ class home extends React.Component {
         this.handleTextClick = this.handleTextClick.bind(this)
     }
 
+    //Gets articles from database before load
     componentWillMount() {
         this.getArticles()
     }
 
+    //Sets up settings and searching on page load
     componentDidMount() {
         this.getSettings()
         const searchParam = document.getElementById('search-input')
@@ -30,6 +32,7 @@ class home extends React.Component {
         })
 
     }
+    //Sets the type of search all/author/topic/content
     handleSearchReturn(e) {
         let stype = e.target.getAttribute("s")
         this.props.handleChangeSearchType(stype)
@@ -42,6 +45,8 @@ class home extends React.Component {
         document.getElementById("search-display-span").textContent = stype+":"
         this.performSearch(searchParam)
     }
+
+    //Function to perform the search
     performSearch(searchParam) {
         const typeOf = this.props.typeOfSearch
         const res = this.state.articlesFromSearch.map((article) => {
@@ -74,6 +79,8 @@ class home extends React.Component {
         })
         this.setState({ articles: res })
     }
+
+    //Gets user settings from local storage
     async getSettings() {
         const columnsize = localStorage.getItem('columnsize')
         const boxsize = localStorage.getItem('boxsize')
@@ -85,13 +92,15 @@ class home extends React.Component {
         }
     }
 
-
+    //Gets all articles from database
     async getArticles() {
         const res = await fetch('/info/articles')
         const articlesInfo = await res.json()
         this.setState({ articles: articlesInfo.articles })
         this.setState({ articlesFromSearch: articlesInfo.articles })
     }
+
+    //Handles clicking right arrow button on each topic (scroll)
     handleRightScroll(e) {
         let pa;
         if (e.target.classList.contains("fas")) {
@@ -108,6 +117,7 @@ class home extends React.Component {
         }
 
     }
+    //Handles left click button on topics (scroll)
     handleLeftScroll(e) {
         let pa;
         if (e.target.classList.contains("fas")) {
@@ -123,7 +133,7 @@ class home extends React.Component {
 
 
     }
-
+    //Function makes text clickable to bring user to artcle as well
     handleTextClick(e) {
         if (e.target.nodeName !== "IMG") {
             if (e.target.classList.contains("home-articles-container")) {

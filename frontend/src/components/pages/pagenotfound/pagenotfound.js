@@ -1,3 +1,4 @@
+//Renders this page if a invalid route is typed in
 import React from 'react'
 import './pagenotfound.css'
 

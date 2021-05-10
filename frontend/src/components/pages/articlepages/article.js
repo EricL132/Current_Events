@@ -15,15 +15,17 @@ class article extends React.Component {
         }
         this.getArticle()
     }
+    //Checks for login on load
     componentDidMount() {
         this.checkForLogin()
     }
+
+    //Function for checking user login
     async checkForLogin() {
         const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
         if (res.status === 200) {
             this.setState({ accessToken: res.headers.get('access-token') })
             const decoded = jwt_decode(res.headers.get('access-token'));
-console.log(decoded.name)
             this.setState({ email: decoded.email })
             this.setState({ loggedInName: decoded.name })
             this.setState({ admin: decoded.admin })
@@ -32,19 +34,20 @@ console.log(decoded.name)
     }
 
 
-
+    //Gets article infomation from server
     async getArticle() {
         const res = await fetch(`/info/findarticle/${window.location.search}`)
 
         if (res.status === 200) {
             const resInfo = await res.json()
-            console.log(resInfo.article)
             this.setState({ article: resInfo.article }, () => {
                 this.handleError()
             })
 
         }
     }
+
+    //Handles rendering of youtube/backup video
     async handleError() {
         const res = await fetch(`https://www.youtube.com/oembed?url=${this.state.article.vid}&format=json`)
         if (res.status !== 200) {
@@ -52,6 +55,7 @@ console.log(decoded.name)
         }
         this.setState({ pageLoaded: true })
     }
+    //Function called when new comment created
     async addNewComment() {
         const comment = document.getElementById('commenttext').value
         const res = await fetch('/info/addComment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ comment: comment, article: this.state.article }) })

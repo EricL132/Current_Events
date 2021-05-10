@@ -15,6 +15,7 @@ class createpost extends React.Component {
         this.removeImage = this.removeImage.bind(this)
     }
 
+    //Listens for file upload from desktop
     componentDidMount() {
         this.checkIfAdmin()
         document.getElementById("file-input").addEventListener('click', (e) => {
@@ -34,17 +35,19 @@ class createpost extends React.Component {
 
 
     }
-
+    //Checks if user is logged in 
     async checkIfAdmin() {
         await this.checkAccess();
         const tokenInfo = await this.jwtDecode()
         this.setState({ tokenInfo: tokenInfo })
     }
 
+    //Decodes jwt tokens
     async jwtDecode() {
 
         return JSON.parse(window.atob(this.state.accessToken.split('.')[1]));
     }
+    //Checks if user still has access 
     async checkAccess() {
         if (this.state.loggedIn) {
             const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
@@ -57,7 +60,7 @@ class createpost extends React.Component {
             }
         }
     }
-
+    //Handles creation of posts called when create post is clicked
     async handleCreatePost() {
         this.setState({ errorMessage: "" })
         if (!this.state.articleCreated) {
@@ -170,7 +173,7 @@ class createpost extends React.Component {
 
     }
 
-
+    //Checks for image on website automatically users can choose whether to use or not
     checkForImage() {
         const link = document.getElementById("post-video").value
         if (link) {
@@ -194,10 +197,12 @@ class createpost extends React.Component {
         }
 
     }
+    //Sets new image 
     setImage(e) {
         this.setState({ image: e.target.value })
     }
-
+    
+    //Button clicked to remove image
     removeImage() {
         this.setState({ image: "" })
         document.getElementById("post-image").value = ""

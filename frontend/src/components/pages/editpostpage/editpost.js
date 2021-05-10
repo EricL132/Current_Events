@@ -18,10 +18,11 @@ class editpost extends React.Component {
         this.handleSelectItem = this.handleSelectItem.bind(this)
         this.handleSearch = this.handleSearch.bind(this)
     }
-
+    //Calls function get articles on load
     componentDidMount() {
         this.getArticles()
     }
+    //Function gets all user created articles, gets all articles if admin/sub admin
     async getArticles() {
         await this.checkAccess();
         fetch('/info/myarticles').then((res) => {
@@ -34,6 +35,8 @@ class editpost extends React.Component {
             this.setState({ pageloaded: true })
         })
     }
+
+    //Checks for user login/access
     async checkAccess() {
         if (this.state.loggedIn) {
             const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
@@ -47,6 +50,7 @@ class editpost extends React.Component {
         }
     }
 
+    //Function called when article is selected for editing 
     handleSelectItem(e) {
         document.getElementById("edit-search").style.right = "0"
         this.setState({ selected: true })
@@ -54,7 +58,7 @@ class editpost extends React.Component {
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
-
+    //Function that handles searching of a specific article
     handleSearch(e) {
         const { name, value } = e.target
         this.state.searchFields[name] = value

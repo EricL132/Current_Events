@@ -1,7 +1,7 @@
+//Reset password component
+
 import React from 'react'
 import './resetpass.css'
-
-
 
 class resetpass extends React.Component {
     constructor(props) {
@@ -14,12 +14,14 @@ class resetpass extends React.Component {
             pageLoaded: false
         }
     }
+
     componentWillMount() {
         this.checkAccess()
     }
     componentDidMount() {
     }
 
+    //Checks for user login
     async checkAccess() {
         const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
         if (res.status === 200) {
@@ -28,6 +30,7 @@ class resetpass extends React.Component {
             this.setState({ pageLoaded: true })
         }
     }
+    //Handles reset password, function called when change password is clicked
     async handleResetpass() {
         this.setState({ errorMessage: "" })
         const pass = document.getElementById("password").value

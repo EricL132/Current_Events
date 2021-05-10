@@ -16,6 +16,7 @@ class account extends React.Component {
         }
     }
 
+    //Gets user info from server
     async getUserInfo() {
         await this.checkAccess()
         const decoded = jwt_decode(this.state.accessToken);
@@ -37,6 +38,7 @@ class account extends React.Component {
 
     }
 
+    //Checks if user still has access
     async checkAccess() {
         if (this.state.loggedIn) {
             const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
@@ -49,6 +51,7 @@ class account extends React.Component {
         }
     }
 
+    //Function called to change column size of grid mode
     async changeColumnSize() {
         document.getElementById('change-column-button').innerText = 'Change'
         const size = document.getElementById('homecolumnsinput').value
@@ -57,7 +60,7 @@ class account extends React.Component {
         this.setState({ columnsize: size })
         document.getElementById('homecolumnsinput').value = ""
     }
-
+    //Function called to change box size of grid mode
     async changeBoxSize() {
         document.getElementById('change-box-button').innerText = 'Change'
         const size = document.getElementById('box-size-input').value
@@ -66,10 +69,11 @@ class account extends React.Component {
         this.setState({ boxsize: size })
         document.getElementById('box-size-input').value = ""
     }
+    //Gets user info on load
     componentDidMount() {
         this.getUserInfo()
     }
-
+    //Handles changing current password from users account page
     async handleChangePass(e) {
         e.preventDefault()
         const currentPass = document.getElementById("currentpass").value
