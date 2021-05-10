@@ -1,6 +1,6 @@
 import React from 'react'
 import './article.css'
-
+import jwt_decode from 'jwt-decode';
 class article extends React.Component {
     constructor(props) {
         super(props)
@@ -22,18 +22,15 @@ class article extends React.Component {
         const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
         if (res.status === 200) {
             this.setState({ accessToken: res.headers.get('access-token') })
-            const tokenInfo = await this.jwtDecode()
-            this.setState({ email: tokenInfo.email })
-            this.setState({ loggedInName: tokenInfo.name })
-            this.setState({ admin: tokenInfo.admin })
+            const decoded = jwt_decode(res.headers.get('access-token'));
+console.log(decoded.name)
+            this.setState({ email: decoded.email })
+            this.setState({ loggedInName: decoded.name })
+            this.setState({ admin: decoded.admin })
             this.setState({ loggedIn: true })
         }
     }
 
-    async jwtDecode() {
-
-        return JSON.parse(window.atob(this.state.accessToken.split('.')[1]));
-    }
 
 
     async getArticle() {
@@ -41,6 +38,7 @@ class article extends React.Component {
 
         if (res.status === 200) {
             const resInfo = await res.json()
+            console.log(resInfo.article)
             this.setState({ article: resInfo.article }, () => {
                 this.handleError()
             })
@@ -98,8 +96,8 @@ class article extends React.Component {
                         <div id="comments-container">
                             <h1 id="comment-header">Comments</h1>
                             {this.state.article.comments ?
-                                this.state.article.comments.map((comment) => {
-                                    return <div className="comment-container">
+                                this.state.article.comments.map((comment,i) => {
+                                    return <div key = {i} className="comment-container">
                                         <h3>{comment.name}</h3>
                                         <span>{comment.comment}</span>
                                     </div>

@@ -201,9 +201,9 @@ router.post('/addComment', async (req, res) => {
     //Looks for the article to add into
     let article = await articlesSchema.findOne({ _id: req.body.article._id })
     if (article.comments) {
-        article.comments = [...article.comments, { name: loggedin, comment: req.body.comment }]
+        article.comments = [...article.comments, { name: loggedin.name, comment: req.body.comment }]
     } else {
-        article.comments = [{ name: loggedin, comment: req.body.comment }]
+        article.comments = [{ name: loggedin.name, comment: req.body.comment }]
     }
     //Saves to article
     await article.save()
