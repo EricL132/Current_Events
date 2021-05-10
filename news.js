@@ -1,5 +1,6 @@
-//const router = require('express').Router()
-//var cron = require('node-cron');
+/*
+Node.js script used to get articles from google news api into database (fillers)
+*/
 const NewsAPI = require('newsapi');
 const articleSchema = require('./models/articles');
 const dotenv = require('dotenv')
