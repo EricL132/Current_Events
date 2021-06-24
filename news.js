@@ -24,7 +24,7 @@ function getNews(keyword) {
         //Request to api for news
         await newsapi.v2.everything({
             q: keyword,
-        
+
 
         }).then(response => {
             try {
@@ -64,10 +64,11 @@ function getNews(keyword) {
 
 //Gets news from each keyword in keywords
 async function getnewNewsFunc() {
-   for (let words of keywords) {
+    await articleSchema.remove({})
+    for (let words of keywords) {
         await getNews(words)
-    } 
-
+    }
+    process.exit()
 }
 
 
