@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {registerValidation,loginValidation,resetpassValidation} = require('./validations')
+const {registerValidation,loginValidation,resetpassValidation,resetpassConfirmValidation,changepassValidation} = require('./validations')
 const User = require('../models/user')
 const RefreshTokens = require('../models/refreshtokens')
 const ResetTokens = require('../models/resettokens')
@@ -9,7 +9,8 @@ const fetch = require('node-fetch')
 const crypto  = require('crypto')
 const nodemailer = require('nodemailer')
 const path = require('path');
-
+const querystring = require('querystring')
+const jwt_decode = require('jwt-decode');
 
 //POST route to register account
 router.post('/register',async (req,res)=>{
@@ -29,9 +30,8 @@ router.post('/register',async (req,res)=>{
         password:hashPassword
     })
     await newUser.save()
-    const resLogin = await fetch(`http://${req.headers.host}/user/account/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: newUser.email, password: req.body.password,registering:true }) })
-    const resRead = await resLogin.json()
-    res.cookie("jwt", resRead.refreshToken, {
+    const resLogin = await fetch(`http://${req.headers.host}/user/account/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: newUser.email, password: req.body.password}) })
+    res.cookie("jwt", resLogin.headers.get('set-cookie').split("=")[1].split(";")[0], {
         expires: new Date(Date.now() + 86400000),
         httpOnly: true
     })
@@ -67,12 +67,10 @@ router.post('/login', async (req,res)=>{
         httpOnly: true
     })
 
-    if(req.body.registering){
-        return res.header('access-token', token).send({email:user.email,name:user.first,admin:user.admin,accessToken: token,refreshToken:refreshToken })
-    }else{
-        return res.header('access-token', token).send({email:user.email,name:user.first,admin:user.admin,accessToken: token })
+  
+    return res.header('access-token', token).send({email:user.email,name:user.first,admin:user.admin,accessToken: token })
 
-    }
+    
 
 })
 
@@ -113,7 +111,7 @@ router.post('/refreshaccess',async(req,res)=>{
         if(err) return res.status(400).end()
         const checkuser = await User.findOne({email:user.email})
         if(!checkuser) return res.status(400).end()
-        const accessToken = jwt.sign({email:user.email,name:user.name,admin:checkuser.admin},process.env.ACCESS_TOKEN,{expiresIn:'1m'})
+        const accessToken = jwt.sign({email:user.email,name:user.name,admin:checkuser.admin,subadmin:checkuser.subadmin},process.env.ACCESS_TOKEN,{expiresIn:'1m'})
         return res.status(200).send({accessToken:accessToken})
     })
 })
@@ -127,11 +125,14 @@ router.post('/logout',async (req,res)=>{
 
 //POST route to reset password
 router.post('/resetpass',async(req,res)=>{
+    
     const {error} = resetpassValidation(req.body)
-    if(error) return res.status(400).end()
+    if(error) return res.status(400).send({status:'Invalid Email'})
     const email = req.body.email.toLowerCase()
+
+
     const user = await User.findOne({email:email})
-    if(!user) return res.status(400).send({statis:'Email not registered'})
+    if(!user) return res.status(400).send({status:'Email not registered'})
     const oldreset = await ResetTokens.findOne({email:email})
     if(oldreset) await oldreset.remove()
     const newToken = new ResetTokens({email:email,token:crypto.randomBytes(16).toString('hex')})
@@ -150,12 +151,53 @@ router.post('/resetpass',async(req,res)=>{
         from: `"Eric" <${process.env.gmailUser}>`,
         to: email,
         subject: "Reset Password",
-        text: "Hi,\n" + "Link will expire in 24 hours\nPlease click below to reset password:\n" + `${req.headers.origin}/user/account/resetpass/?token=${newToken.token}`,
+        text: "Hi,\n" + "Link will expire in 24 hours\nPlease click below to reset password:\n" + `${req.headers.origin}/resetpassword/?token=${newToken.token}`,
     });
     return res.status(200).send({ status: "Reset password email sent" })
 })
 
+//POST route to reset password
+router.post('/reset',async (req,res)=>{
+    const {error} = resetpassConfirmValidation(req.body)
+    if(error) return res.status(400).send({status:"Invalid Token"})
+    const param = querystring.parse(req.body.token)
+    console.log(param['?token'])
+    if(!param['?token']) return res.status(400).send({status:"Invalid Token"})
+    const reset  = await ResetTokens.findOne({token:param['?token']})
+    if(!reset) return res.status(400).send({status:"Invalid Token"})
+    const salt = await bcrypt.genSalt(15)
+    const hashPassword = await bcrypt.hash(req.body.password,salt)
+    const user = await User.findOneAndUpdate({email:reset.email},{password:hashPassword})
+   // await reset.remove()
+    const resLogin = await fetch(`http://${req.headers.host}/user/account/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: user.email, password: req.body.password }) })
+        res.cookie("jwt", resLogin.headers.get('set-cookie').split("=")[1].split(";")[0], {
+        expires: new Date(Date.now() + 86400000),
+        httpOnly: true
+    })
+    return res.status(200).end()
 
+})
 
-
+//POST route to change password from user account page
+router.post('/changepass',async (req,res)=>{
+    const {error} = changepassValidation(req.body)
+    if(error) return res.status(400).send({status:error.details[0].message})
+    const login = checkLogin(req)
+    if(!login) return res.status(400).send({status:"Log out and try again"})
+    const email = req.body.email.toLowerCase()
+    const user = await User.findOne({email}) 
+    if(!user) return res.status(400).send({status:"Unable to find user"})
+    const validPassword = await bcrypt.compare(req.body.currentpass,user.password)
+    if(!validPassword) return res.status(400).send({status:"Current password is wrong"})
+    const salt = await bcrypt.genSalt(15)
+    const hashPassword = await bcrypt.hash(req.body.newpass,salt)
+    user.password = hashPassword
+    await user.save()
+    return res.status(200).send({status:"Successfully changed password"})
+})
+async function checkLogin(req) {
+    const checkadmin = await fetch(`http://${req.headers.host}/user/account/access`, { method: 'GET', headers: { 'cookie': 'jwt=' + req.cookies.jwt, 'access-token': 'none' } })
+    var decoded = jwt_decode(checkadmin.headers.get('access-token'));
+    return decoded.name
+}
 module.exports = router

@@ -1,19 +1,16 @@
 const mongoose = require('mongoose')
 
 
-//Article schema for news articles
+//Article schema for articles
 const articlesSchema = new mongoose.Schema({
     title:{
         type:String,
-        required:true
     },
     author:{
         type:String,
-        required:true
     },
     description:{
         type:String,
-        required:true
     },
     vid:{
         type:String
@@ -29,7 +26,6 @@ const articlesSchema = new mongoose.Schema({
     },
     publishedAt:{
         type:String,
-        required:true
     },
     content:{
         type:String,
@@ -39,7 +35,14 @@ const articlesSchema = new mongoose.Schema({
     },
     comments:{
         type:Array
-    }
+    },
+    userID:{
+        type:String,
+    },
+    editDate:{
+        type:String
+    },
+    
 })
 // newsapi ad70d5a6b15a41be91901d72899fef58 
 

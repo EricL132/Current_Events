@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 
-//Refresh Schema for login 
+//Refresh token schema for login 
 const refreshSchema = new mongoose.Schema({
     email:{
         type:String,

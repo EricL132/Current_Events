@@ -1,0 +1,14 @@
+.selected-item-info-container{
+    width: 45%;
+    height: 800px;
+    background: var(--lighter-background); 
+    margin-top: 2rem
+}
+
+#submit-buttom-container{
+    width: 45%;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+}
+

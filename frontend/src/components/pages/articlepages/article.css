@@ -14,6 +14,7 @@
     background-color: var(--lighter-background);
     padding: 2rem;
     margin-top: 5rem;
+    overflow: hidden;
 
 }
 
@@ -91,7 +92,7 @@ margin-left: 1rem;
 
 #commentbutton{
     min-height: 40px;
-    width: 10%;
+    width: 100px;
     margin-top: 10px;
 }
 
@@ -131,4 +132,22 @@ margin-left: 1rem;
 
 .comment-container span{
     overflow-wrap: break-word;
+}
+
+@media(max-width:800px){
+    .article-page-container .middle-container{
+        width: 80%;
+        
+    }
+    .article-page-container .video-container{
+        width: 100%;
+        height: 300px;
+    }
+    #comments-container{
+        width: 100%;
+
+    }
+    .comment-container{
+        width: 80%;
+    }
 }

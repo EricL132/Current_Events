@@ -1,5 +1,6 @@
-//const router = require('express').Router()
-//var cron = require('node-cron');
+/*
+Node.js script used to get articles from google news api into database (fillers)
+*/
 const NewsAPI = require('newsapi');
 const articleSchema = require('./models/articles');
 const dotenv = require('dotenv')
@@ -29,28 +30,28 @@ function getNews(keyword) {
         }).then(response => {
             try {
                 //goes through returned data   
-                response.articles.map(async (article) => {
+                response.articles.map(async (article,i) => {
                     //checks if theres an article and checks if its new
-                    if (article.description && await checkIfNew(article)) {
-                        //changes publishdAt
-                        const publishedA = article.publishedAt.split("T")[0]
-                        //article schema to add to database
-                        const a = new articleSchema({
-                            author: article.author,
-                            title: article.title,
-                            description: article.description,
-                            url: article.url,
-                            urlToImage: article.urlToImage,
-                            publishedAt: publishedA,
-                            content: article.content,
-                            topic: keyword,
-                            vid: 'https://www.youtube.com/embed/kaGO-_GCwHk',
-                            backupvid: 'https://drive.google.com/file/d/1U0N635TIBrfEihgoZMyqWn7tDgrmeQEt/preview'
-
-                        })
-                        //saves to databse
-                        await a.save();
+                    if(i<10){
+                        if (article.description && await checkIfNew(article)) {
+                            //changes publishdAt
+                            const publishedA = article.publishedAt.split("T")[0]
+                            //article schema to add to database
+                            const a = new articleSchema({
+                                author: article.author,
+                                title: article.title,
+                                description: article.description,
+                                url: article.url,
+                                urlToImage: article.urlToImage,
+                                publishedAt: publishedA,
+                                content: article.content,
+                                topic: keyword,
+                            })
+                            //saves to databse
+                            await a.save();
+                        }
                     }
+                    
                     return resolve()
                 })
             } catch (err) {
@@ -71,14 +72,15 @@ async function getnewNewsFunc() {
     process.exit()
 }
 
+/* async function deleteAll(){
+    await articleSchema.remove({})
+}
 
-
-
+deleteAll() */
 //Checks if news are new
 function checkIfNew(article) {
     return new Promise(async (resolve) => {
         const articleFound = await articleSchema.findOne({ title: article.title })
-        console.log(article)
         if (articleFound) {
             return resolve(false)
         } else {
@@ -88,4 +90,4 @@ function checkIfNew(article) {
     })
 }
 
-getnewNewsFunc()
+ getnewNewsFunc() 

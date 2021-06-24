@@ -6,26 +6,24 @@
 .create-middle-container {
     margin-top: 5rem;
     background-color: var(--lighter-background);
-   
+    width: 40%;
+    max-width: 650px;
+    min-width: 325px;
 }
 
 .inputfield-container {
-    margin-top: 2.5rem;
+    margin-top: -1rem;
     position: relative;
     display: flex;
     align-items: center;
     flex-direction: column;
     background-color: transparent;
-    min-width: 850px;
-   
-
 }
 
 .post-input {
-    width: 350px;
+    width: 90%;
     font-size: 1.1rem;
     padding: .7rem;
-    width: 90%;
     margin-top: 1rem;
     padding-left: .8rem;
     background-color: var(--input-color);
@@ -36,9 +34,11 @@
     border-radius: 5px;
 }
 
-
-#post-info{
-    min-height: 25rem;
+.post-input::placeholder{
+    color: var(--text-color);
+}
+.post-info{
+    height: 25rem;
     padding-bottom: -1rem;
     resize: none;
    
@@ -56,8 +56,79 @@
     color: var(--text-color-white);
     position: relative;
     margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#image-box{
+    width: 100%;
+    margin-top: 1rem;
+}
+#image-con{
+    max-width: 70%;
+    min-height: 40px;
+}
+#image-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#addImageByFile-container{
+    margin: 2px;
+    right: 0;
+    position: absolute;
+}
+
+#addfileButton{
+    margin-top: 1rem;
+    cursor: pointer;
+    background-color: var(--input-color);
+    color: white;
+    outline: none;
+    border-radius: 5px;
+    border: none;
+    padding: .5rem;
+}
+
+.create-h1{
+color: var(--text-color);
+text-align: center;
+font-size: 1.55rem;
+}
+.delete-image{
+    position: absolute;
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    cursor: pointer;   
+    background-color: rgba(0, 0, 0, .5);
+    color: white;
+    padding: .45rem .65rem;
+    text-align: center;
+    margin-top: 1.25rem;
+    margin-left: .25rem;
+    display: none;
 }
 
 
+#image-con:hover .delete-image{
+    display: block;
+}
+#addfileButton:active{
+    transform: translateY(1px);
 
+}
 
+#file-input{
+    display: none;
+}
+
+#error-Message{
+    position: absolute;
+    bottom: .5rem;
+    color: red;
+}

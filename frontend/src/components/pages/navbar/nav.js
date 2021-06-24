@@ -1,3 +1,4 @@
+//Navbar component
 import React from 'react'
 import './nav.css'
 import { withRouter } from 'react-router-dom';
@@ -24,24 +25,42 @@ class nav extends React.Component {
         this.handleGoToHome = this.handleGoToHome.bind(this)
         this.handleLoadCreate = this.handleLoadCreate.bind(this)
         this.handleAccount = this.handleAccount.bind(this)
-        this.state = { admin: false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false }
+        this.handleDisplayMode = this.handleDisplayMode.bind(this)
+        this.handleLoadEdit = this.handleLoadEdit.bind(this)
+        this.state = { admin: false, weather: "", showLogin: false, signUp: false, errorMessage: "", loggedIn: false, loggedInName: "", email: "", accessToken: "none", darkmode: true, showmenu: false, forgotpassword: false, modeText: [" Dark Mode"] }
         this.checkForLogin()
     }
 
 
 
-
+    //Checks for login and dark/light mode
     componentDidMount() {
         //this.getWeather()
+        const darkmode = localStorage.getItem("darkmode")
+        if (darkmode !== null) {
+            if (darkmode === "true") {
+                this.setState({ darkmode: false }, () => {
+                    this.handleDarkMode("firstload")
+                })
+            } else {
+                this.setState({ darkmode: true }, () => {
+                    this.handleDarkMode("firstload")
+                })
+            }
+
+        }
         interval = setInterval(() => {
             this.checkAccess()
         }, 120000)
+
+
     }
 
+    //Function to check login
     async checkForLogin() {
         const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
         if (res.status === 200) {
-            
+
             this.setState({ accessToken: res.headers.get('access-token') })
             const tokenInfo = await this.jwtDecode()
             this.setState({ email: tokenInfo.email })
@@ -55,11 +74,13 @@ class nav extends React.Component {
         }
     }
 
-
+    //Function to decode jwt token
     async jwtDecode() {
 
         return JSON.parse(window.atob(this.state.accessToken.split('.')[1]));
     }
+
+    //Function to check if access token expired
     async checkAccess() {
         if (this.state.loggedIn) {
             const res = await fetch('/user/account/access', { method: "GET", headers: { 'access-token': this.state.accessToken } })
@@ -72,14 +93,19 @@ class nav extends React.Component {
         }
     }
 
+    //Removes the check access token interval
     componentWillUnmount() {
         clearInterval(interval)
     }
+
+    //Function to get weather in new york
     async getWeather() {
         const res = await fetch('http://api.weatherstack.com/current?access_key=382bce18da87832e602b2515716a2a0f&query=New%20York&units=f')
         const weatherInfo = await res.json()
         this.setState({ weather: weatherInfo.current.temperature })
     }
+
+    //Function used to handle close login popup when clicked outside of it
     handleOutsideClick(e) {
         const ele = document.getElementById('lighter-outside')
         if (e.target === ele) {
@@ -89,6 +115,14 @@ class nav extends React.Component {
             this.setState({ errorMessage: "" })
         }
     }
+    //Function to set display modes
+    handleDisplayMode() {
+        this.props.handleDisplayMode()
+        localStorage.setItem('displayslide', this.props.displaySlide)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    //Function to show login popup
     handleShowLogin(e) {
         this.setState({ errorMessage: "" })
         if (!this.state.showLogin) {
@@ -100,6 +134,7 @@ class nav extends React.Component {
         }
     }
 
+    //Function to close signup popup and go to login popup
     handleSignupFormClose() {
         this.setState({ errorMessage: "" })
         if (!this.state.signUp) {
@@ -109,10 +144,13 @@ class nav extends React.Component {
         }
     }
 
-    handleAccount(){
-        this.setState({showmenu:false})
+    //Function to navigate to account page (login required)
+    handleAccount() {
+        this.setState({ showmenu: false })
         this.props.history.push('/account')
     }
+
+    //Handles sign up
     async handleSignup() {
         const loadingContainer = document.getElementsByClassName('loading-span')[0]
         loadingContainer.innerHTML = ""
@@ -136,16 +174,16 @@ class nav extends React.Component {
             this.setState({ errorMessage: statusMessage.status })
             loadingContainer.innerHTML = "Sign Up"
         } else {
-            this.state.loggedInName = first.charAt(0).toUpperCase() + first.slice(1)
-            this.state.email = email
-            this.state.showLogin = false
-            this.state.forgotpassword = false
-            this.state.signUp = false
-            this.state.showmenu = false
+            this.setState({ loggedInName: first.charAt(0).toUpperCase() + first.slice(1) })
+            this.setState({ email: email })
+            this.setState({ showLogin: false })
+            this.setState({ forgotpassword: false })
+            this.setState({ signUp: false })
+            this.setState({ showmenu: false })
             this.setState({ loggedIn: true })
         }
     }
-
+    //Handles login
     async handleLogin() {
         const loadingContainer = document.getElementsByClassName('loading-span')[0]
         loadingContainer.innerHTML = ""
@@ -174,14 +212,13 @@ class nav extends React.Component {
 
 
     }
-
-    async handleDarkMode() {
+    //Handles display dark/light mode
+    async handleDarkMode(item) {
         if (this.state.darkmode) {
             const navbar = document.getElementById('nav-container')
 
             const loginB = navbar.children[0].children[0]
             const moonicon = navbar.children[0].children[1]
-            navbar.style.border = '1px solid black'
             navbar.style.color = 'var(--text-color-black)'
             document.documentElement.style.setProperty('--background-color', '#f7f7f8');
             document.documentElement.style.setProperty('--lighter-background', '#fff');
@@ -194,12 +231,15 @@ class nav extends React.Component {
             if (moonicon) {
                 moonicon.style.border = '1px solid black'
             }
+            if (item !== "firstload") {
+                localStorage.setItem("darkmode", false)
+            }
+
             this.state.darkmode = false
         } else {
             const navbar = document.getElementById('nav-container')
             const loginB = navbar.children[0].children[0]
             const moonicon = navbar.children[0].children[1]
-            navbar.style.border = ''
             navbar.style.color = 'var(--text-color-white)'
             document.documentElement.style.setProperty('--background-color', '#0E0E0E');
             document.documentElement.style.setProperty('--lighter-background', '#18181b');
@@ -212,12 +252,17 @@ class nav extends React.Component {
             if (moonicon) {
                 moonicon.style.border = ''
             }
+            if (item !== "firstload") {
+                localStorage.setItem("darkmode", true)
+
+            }
             this.state.darkmode = true
 
         }
         this.setState({ showmenu: false })
     }
 
+    //Handles whether menu should be shown
     handleShowMenu(e) {
         if (e.type === 'blur') {
             if (!e.relatedTarget) {
@@ -242,6 +287,7 @@ class nav extends React.Component {
 
     }
 
+    //Shows forget password page or closes forgot password page and shows login popup
     handleShowForgotpass() {
         this.setState({ errorMessage: "" })
         if (!this.state.forgotpassword) {
@@ -251,6 +297,7 @@ class nav extends React.Component {
         }
     }
 
+    //Handles logout
     async handleLogout() {
         const res = await fetch('/user/account/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
         if (res.status === 200) {
@@ -266,33 +313,61 @@ class nav extends React.Component {
         }
     }
 
+    //Handles send resetpassword request
     async handleForgotPass(e) {
         e.preventDefault()
+        const email = document.getElementById("email").value
+        const res = await fetch('/user/account/resetpass', { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
+        if (res.status !== 200) {
+            const rep = await res.json()
+            this.setState({ errorMessage: rep.status })
+        } else {
+            document.getElementsByClassName('login-form')[0].innerHTML = "<span class='email-sent-span'>Email Sent</span>"
+        }
 
     }
 
+    //Handles return to homepage from differnt page on site
     handleGoToHome() {
         if (window.location.pathname === "/") {
-            this.setState({showmenu:false})
-            document.getElementsByClassName('page-container')[0].scrollIntoView({ block: 'start', behavior: 'smooth' })
+            this.setState({ showmenu: false })
+            window.scrollTo({ top: 0, behavior: 'smooth' })
         } else {
-            this.setState({showmenu:false})
+            this.setState({ showmenu: false })
             this.props.history.push('/')
         }
     }
 
-    handleLoadCreate(){
-        this.setState({showmenu:false})
+    //Goes to create post page
+    handleLoadCreate() {
+        this.setState({ showmenu: false })
         this.props.history.push('/createpost')
     }
+
+    //Goes to edit post page
+    handleLoadEdit() {
+        this.setState({ showmenu: false })
+        this.props.history.push('/editpost')
+    }
+
+    
     render() {
         return (
             <>
-
                 <div id="nav-container">
                     <button onClick={this.handleGoToHome} className="home-button">Home</button>
                     {window.location.pathname === "/" ?
-                        <input autoComplete="off" placeholder="Search" spellCheck="false" className="search-input" id="search-input" onChange={this.handleSearch}></input>
+                        <div className="dropdown-search">
+                            <input autoComplete="off" placeholder="Search" spellCheck="false" className="search-input" id="search-input"></input>
+                            <div id="search-display"><span id="search-display-span">All:</span></div> 
+                            <div id="search-menu-type" className="dropdown-search-content">
+                                <button className="search-buttons" s="search" >Search All</button>
+                                <button className="search-buttons" s="title" >Search By Title</button>
+                                <button className="search-buttons" s="author" >Search By Author</button>
+                                <button className="search-buttons" s="topic" >Search By Topic</button>
+                                <button className="search-buttons" s="content" >Search By Content</button>
+                            </div>
+                        </div>
                         : null}
 
                     {this.state.weather ?
@@ -301,10 +376,10 @@ class nav extends React.Component {
                         </div>
                         : null}
                     {!this.state.loggedIn ?
-                        <div className="nav-dropdown-container">
-
+                        <div className="nav-dropdown-container">{/* <i class="fas fa-grip-lines"></i> */}
+                            <button onClick={this.props.handleDisplayMode} className="grid-icon-login set-buttons" stlye={{ marginRight: "2rem" }}><i class="fas fa-th"></i></button>
+                            <button onClick={this.handleDarkMode} className="moon-icon-login set-buttons"><i className="far fa-moon"></i></button>
                             <button onClick={this.handleShowLogin} id="open-login-button"></button>
-                            <button onClick={this.handleDarkMode} className="moon-icon-login"><i className="far fa-moon"></i></button>
                         </div>
                         :
 
@@ -314,18 +389,41 @@ class nav extends React.Component {
                             {this.state.showmenu ?
                                 <div id="dropdown-menu">
                                     <ul>
-                                        <li >
-                                            <button className="dropdown-button" onClick={this.handleDarkMode}><i className="far fa-moon"> Dark Mode</i></button>
-                                        </li>
-                                        {this.state.admin ?
-                                            <li>
-                                                <button onClick={this.handleLoadCreate}>Create Post </button>
-                                            </li>
-                                            : null}
-
                                         <li>
                                             <button onClick={this.handleAccount}>Account</button>
                                         </li>
+                                        <li>
+                                            <button onClick={this.handleLoadCreate}>Create Post</button>
+                                        </li>
+                                        <li>
+                                            <button onClick={this.handleLoadEdit}>Edit Post</button>
+                                        </li>
+
+
+
+                                        {this.state.darkmode ?
+                                            <li >
+                                                <button className="dropdown-button" onClick={this.handleDarkMode}><i className="far fa-moon"></i> Light Mode</button>
+                                            </li>
+                                            :
+                                            <li >
+                                                <button className="dropdown-button" onClick={this.handleDarkMode}><i className="far fa-moon"></i> Dark Mode</button>
+                                            </li>}
+                                        {this.props.displaySlide ?
+                                            <li >
+                                                <button className="dropdown-button" id="displaymode" onClick={this.handleDisplayMode}> Grid Mode</button>
+                                            </li>
+                                            :
+                                            <li >
+                                                <button className="dropdown-button" id="displaymode" onClick={this.handleDisplayMode}> Topic Mode</button>
+                                            </li>}
+
+
+
+
+
+
+
                                         <li>
                                             <button className="dropdown-button" onClick={this.handleLogout} >Logout</button>
                                         </li>

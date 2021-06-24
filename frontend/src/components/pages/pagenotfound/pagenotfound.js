@@ -1,10 +1,10 @@
+//Renders this page if a invalid route is typed in
 import React from 'react'
 import './pagenotfound.css'
 
 
 class resetpass extends React.Component{
     componentDidMount(){
-        console.log('Page not ofund')
     }
     render(){
         return(

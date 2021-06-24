@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
     admin:{
         type:Boolean,
         required:false
+    },
+    subadmin:{
+        type:Boolean,
+        required:false
     }
 
 })

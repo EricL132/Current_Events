@@ -8,38 +8,79 @@ class home extends React.Component {
         super(props)
 
         this.state = { articles: [], articlesFromSearch: [], columnsize: 1500, boxsize: 280 }
-        this.handleLoadArticle = this.handleLoadArticle.bind(this)
         this.getSettings = this.getSettings.bind(this)
         this.handleRightScroll = this.handleRightScroll.bind(this)
+        this.performSearch = this.performSearch.bind(this)
+        this.handleSearchReturn = this.handleSearchReturn.bind(this)
+        this.handleTextClick = this.handleTextClick.bind(this)
+    }
+
+    //Gets articles from database before load
+    componentWillMount() {
         this.getArticles()
     }
+
+    //Sets up settings and searching on page load
     componentDidMount() {
         this.getSettings()
         const searchParam = document.getElementById('search-input')
         searchParam.addEventListener('input', async () => {
-            const res = this.state.articlesFromSearch.map((article) => {
-                return article.filter((item) => {
-                    const title = item.title.toLowerCase()
-                    const searchvalue = searchParam.value.toLowerCase()
-                    if (title.includes(searchvalue)) {
-                        return item
+            this.performSearch(searchParam)
+        })
+        document.getElementById("search-menu-type").addEventListener("click", (e) => {
+            this.handleSearchReturn(e)
+        })
+
+    }
+    //Sets the type of search all/author/topic/content
+    handleSearchReturn(e) {
+        let stype = e.target.getAttribute("s")
+        this.props.handleChangeSearchType(stype)
+        stype= stype.slice(0, 1).toUpperCase() + stype.slice(1, stype.length)
+        document.getElementById("search-input").placeholder = stype
+        const searchParam = document.getElementById('search-input')
+        if(stype==="Search"){
+            stype="All"
+        }
+        document.getElementById("search-display-span").textContent = stype+":"
+        this.performSearch(searchParam)
+    }
+
+    //Function to perform the search
+    performSearch(searchParam) {
+        const typeOf = this.props.typeOfSearch
+        const res = this.state.articlesFromSearch.map((article) => {
+            return article.filter((item) => {
+                if (typeOf === "search") {
+                    try {
+                        const title = item["title"].toLowerCase()
+                        const author = item["author"].toLowerCase()
+                        const topic = item["topic"].toLowerCase()
+                        const content = item["content"].toLowerCase()
+                        const searchvalue = searchParam.value.toLowerCase()
+                        if (title.includes(searchvalue) || author.includes(searchvalue) || topic.includes(searchvalue) || content.includes(searchvalue)) {
+                            return item
+                        }
+                    } catch (err) {
+
                     }
 
-                })
-                /* const result = article.filter((item) => {
-                    const title = item.title.toLowerCase()
-                    const searchvalue = searchParam.value.toLowerCase()
-                    return title.includes(searchvalue)
-                })
-
-                this.setState({ articles: [result] }) */
-                // console.log(article)
+                } else {
+                    if (item[typeOf]) {
+                        const title = item[typeOf].toLowerCase()
+                        const searchvalue = searchParam.value.toLowerCase()
+                        if (title.includes(searchvalue)) {
+                            return item
+                        }
+                    }
+                }
 
             })
-            this.setState({ articles: res })
-
         })
+        this.setState({ articles: res })
     }
+
+    //Gets user settings from local storage
     async getSettings() {
         const columnsize = localStorage.getItem('columnsize')
         const boxsize = localStorage.getItem('boxsize')
@@ -51,22 +92,15 @@ class home extends React.Component {
         }
     }
 
-    async handleLoadArticle(e) {
-        const docu = e.nativeEvent.path.filter((ele) => {
-            try { return ele.classList.contains('home-articles-container') } catch (err) { return null }
-        })
-        const param = await docu[0].getAttribute('title')
-        const queryString = querystring.stringify({ title: param })
-        this.props.history.push(`/article/?${queryString}`)
-
-    }
+    //Gets all articles from database
     async getArticles() {
         const res = await fetch('/info/articles')
         const articlesInfo = await res.json()
         this.setState({ articles: articlesInfo.articles })
         this.setState({ articlesFromSearch: articlesInfo.articles })
-        console.log(articlesInfo.articles)
     }
+
+    //Handles clicking right arrow button on each topic (scroll)
     handleRightScroll(e) {
         let pa;
         if (e.target.classList.contains("fas")) {
@@ -83,6 +117,7 @@ class home extends React.Component {
         }
 
     }
+    //Handles left click button on topics (scroll)
     handleLeftScroll(e) {
         let pa;
         if (e.target.classList.contains("fas")) {
@@ -98,44 +133,95 @@ class home extends React.Component {
 
 
     }
+    //Function makes text clickable to bring user to artcle as well
+    handleTextClick(e) {
+        if (e.target.nodeName !== "IMG") {
+            if (e.target.classList.contains("home-articles-container")) {
+                window.location.href = e.target.firstChild
+            } else {
+                window.location.href = e.target.previousElementSibling
+            }
+        }
+
+    }
     render() {
         return (
             <div className="page-container">
 
                 {this.state.articles ?
-                    <div className="home-all-articles-container" style={{ maxWidth: `${this.state.columnsize}px` }}>
-                        {this.state.articles.map((articleType, i) => {
-                            return <div key={i} className="topics-container">
-                                {articleType[0] ?
-                                    <h1 className="topic-title">{articleType[0].topic.substring(0, 1).toUpperCase() + articleType[0].topic.substring(1, articleType[0].topic.length)}</h1>
+                    <>
 
-                                    : null}
+                        {this.props.displaySlide ?
+                            <div className="home-all-articles-container" style={{ width: `1451px` }}>
+                                {this.state.articles.slice(0).reverse().map((articleType, i) => {
+                                    return <div key={i} className="topics-container">
+                                        {articleType[0] ?
+                                            <h1 className="topic-title">{articleType[0].topic.substring(0, 1).toUpperCase() + articleType[0].topic.substring(1, articleType[0].topic.length)}</h1>
+
+                                            : null}
+                                        <div className="topic-articles">
+                                            {articleType.slice(0).reverse().map((article, i) => {
+                                                const queryString = querystring.stringify({ id: article._id })
+                                                return <div key={i} className="home-articles-container" style={{ maxWidth: "280px" }} onClick={this.handleTextClick}>
+                                                    {article.vid ?
+                                                        <>
+                                                            {article.vid.includes("https://www.youtube.com/watch?v=") ?
+                                                                <a href={`/article/?${queryString}`}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
+                                                                : <a href={article.vid}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
+
+                                                            }
+
+                                                        </>
+                                                        : <a href={`/article/?${queryString}`}><img src={article.urlToImage} className="topic-image" alt=""></img></a>
+                                                    }
+                                                    <span >{article.title}</span>
+                                                </div>
+                                            })
+                                            }
 
 
 
-                                <div className="topic-articles">
-                                    {articleType.map((article, i) => {
-                                        return <div key={i} title={article.title} onClick={this.handleLoadArticle} className="home-articles-container" style={{ minWidth: `${this.state.boxsize}px` }}>
-                                            <img src={article.urlToImage} alt=""></img>
-                                            <span>{article.title}</span>
+
+                                            <div className="slide-button-container-left">
+                                                <button className="slide-article-button" onClick={this.handleLeftScroll}><i className="fas fa-arrow-left"></i></button>
+                                            </div>
+                                            <div className="slide-button-container-right">
+                                                <button className="slide-article-button" onClick={this.handleRightScroll}><i className="fas fa-arrow-right"></i></button>
+                                            </div>
+
+
+                                        </div>
+
+                                    </div>
+
+                                })
+                                }
+                            </div>
+                            : <div className="home-all-articles-container" style={{ maxWidth: `${this.state.columnsize}px` }}>
+                                {this.state.articles.slice(0).reverse().map((item) => {
+                                    return item.slice(0).reverse().map((article, i) => {
+                                        const queryString = querystring.stringify({ id: article._id })
+                                        return <div key={i} className="home-articles-container" style={{ width: `${this.state.boxsize}px`, height: `${this.state.boxsize}px` }} onClick={this.handleTextClick}>
+                                            {article.vid ?
+                                                <>
+                                                    {article.vid.includes("https://www.youtube.com/watch?v=") ?
+                                                        <a href={`/article/?${queryString}`}><img src={article.urlToImage} className="boxes-image" alt=""></img></a>
+                                                        : <a href={article.vid}><img className="boxes-image" src={article.urlToImage} alt=""></img></a>
+
+                                                    }
+
+                                                </>
+                                                : <a href={`/article/?${queryString}`}><img className="boxes-image" src={article.urlToImage} alt=""></img></a>
+                                            }
+                                            <span >{article.title}</span>
                                         </div>
                                     })
-                                    }
+                                })
 
+                                }
+                            </div>}
 
-
-                                    <div className="slide-button-container-left">
-                                        <button className="slide-article-button" onClick={this.handleLeftScroll}><i className="fas fa-arrow-left"></i></button>
-                                    </div>
-                                    <div className="slide-button-container-right">
-                                        <button className="slide-article-button" onClick={this.handleRightScroll}><i className="fas fa-arrow-right"></i></button>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        })}
-                    </div>
+                    </>
                     : null}
 
 
