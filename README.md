@@ -1,5 +1,6 @@
 # News Website
-Find live demo on [Heroku](https://project490.herokuapp.com/)
+Find live demo on [Heroku](https://project490.herokuapp.com/)  
+Site might take 30 seconds to load on first load due to free plan on hosting platform
 
 ## Dark mode with slides
 ![image](https://i.gyazo.com/1650ce5b9836ac0a3ecee958e2094740.jpg) 
