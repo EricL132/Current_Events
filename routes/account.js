@@ -11,6 +11,9 @@ const nodemailer = require('nodemailer')
 const path = require('path');
 const querystring = require('querystring')
 const jwt_decode = require('jwt-decode');
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
+
 
 //POST route to register account
 router.post('/register',async (req,res)=>{
@@ -123,9 +126,22 @@ router.post('/logout',async (req,res)=>{
 })
 
 
+const oauth2Client = new OAuth2(
+    process.env.GMAIL_CLIENT,
+    process.env.GMAIL_SECRET, 
+    "https://developers.google.com/oauthplayground" // Redirect URL
+);
+
+oauth2Client.setCredentials({
+    refresh_token: process.env.GMAIL_REFRESH
+});
+
+
+
+
+
 //POST route to reset password
 router.post('/resetpass',async(req,res)=>{
-    
     const {error} = resetpassValidation(req.body)
     if(error) return res.status(400).send({status:'Invalid Email'})
     const email = req.body.email.toLowerCase()
@@ -137,16 +153,21 @@ router.post('/resetpass',async(req,res)=>{
     if(oldreset) await oldreset.remove()
     const newToken = new ResetTokens({email:email,token:crypto.randomBytes(16).toString('hex')})
     await newToken.save()
+    const accessToken = oauth2Client.getAccessToken()
     let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.gmailUser,
-            pass: process.env.gmailPass,
-        },
+        service: "Gmail",
+            port: 465,
+            secure: true,
+            auth: {
+              type: "OAuth2",
+              user: process.env.gmailUser,
+              clientId: process.env.GMAIL_CLIENT,
+              clientSecret: process.env.GMAIL_SECRET,
+              refreshToken: process.env.GMAIL_REFRESH,
+              accessToken: accessToken,
+            },
     });
-
+    
     await transporter.sendMail({
         from: `"Eric" <${process.env.gmailUser}>`,
         to: email,
