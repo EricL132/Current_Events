@@ -1,5 +1,3 @@
-# News Website
-Find live demo on https://news.erics.software/  
 ## Dark mode with slides
 ![image](https://i.gyazo.com/1650ce5b9836ac0a3ecee958e2094740.jpg) 
 ## Light mode with grids
